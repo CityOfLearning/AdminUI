@@ -5,6 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.dyn.admin.AdminUI;
+import com.dyn.admin.gui.CheckPlayerAchievements;
+import com.dyn.admin.gui.GiveAchievement;
+import com.dyn.admin.gui.GiveItem;
+import com.dyn.admin.gui.Home;
+import com.dyn.admin.gui.ManageStudent;
+import com.dyn.admin.gui.ManageStudents;
+import com.dyn.admin.gui.RemoveItem;
+import com.dyn.admin.gui.Roster;
+import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -94,7 +103,7 @@ public class RemoveItem extends Show {
 			amt = "1";
 		}
 		Minecraft.getMinecraft().thePlayer.sendChatMessage(
-				"/clear " + userBox.getText() + " " + tItem.getRegistryName() + " " + amt + " " + itemMod);
+				"/clear " + userBox.getText().split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod);
 
 	}
 
@@ -125,6 +134,11 @@ public class RemoveItem extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
+		
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
@@ -133,7 +147,7 @@ public class RemoveItem extends Show {
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(false)
-						.addHoverText("Give Items").doesDrawHoverText(true)
+						.addHoverText("Remove Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new RemoveItem())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
