@@ -5,6 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.dyn.admin.AdminUI;
+import com.dyn.admin.gui.CheckPlayerAchievements;
+import com.dyn.admin.gui.GiveAchievement;
+import com.dyn.admin.gui.GiveItem;
+import com.dyn.admin.gui.Home;
+import com.dyn.admin.gui.ManageStudent;
+import com.dyn.admin.gui.ManageStudents;
+import com.dyn.admin.gui.RemoveItem;
+import com.dyn.admin.gui.Roster;
+import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -24,8 +33,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 
 public class GiveItem extends Show {
 
@@ -82,19 +91,9 @@ public class GiveItem extends Show {
 		if (itmSt != null) {
 			itemMod = " " + itmSt.getItemDamage();
 		}
-		String amt;
-		if (!((amountBox.getText() == null) || amountBox.getText().isEmpty())) {
-			try {
-				int amount = Math.abs(Integer.parseInt(amountBox.getText())) % 65;
-				amt = "" + amount;
-			} catch (NumberFormatException nfe) {
-				amt = "1";
-			}
-		} else {
-			amt = "1";
-		}
-		Minecraft.getMinecraft().thePlayer.sendChatMessage(
-				"/give " + userBox.getText() + " " + tItem.getRegistryName() + " " + amt + " " + itemMod);
+		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
+		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + userBox.getText().split("-")[0] + " "
+				+ tItem.getRegistryName() + " " + amt + " " + itemMod);
 	}
 
 	@Override
@@ -124,6 +123,11 @@ public class GiveItem extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
+		
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(false)
@@ -132,7 +136,7 @@ public class GiveItem extends Show {
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(true)
-						.addHoverText("Give Items").doesDrawHoverText(true)
+						.addHoverText("Remove Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new RemoveItem())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
