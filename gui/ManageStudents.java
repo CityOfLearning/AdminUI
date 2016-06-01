@@ -47,6 +47,14 @@ public class ManageStudents extends Show {
 
 	private void freezeUnfreezeStudents(boolean state) {
 		for (String student : AdminUI.roster) {
+			if(state)
+			{
+				teacher.sendChatMessage("/p user " + student.split("-")[0] + " group add _FROZEN_");		
+			} 
+			else 
+			{		
+				teacher.sendChatMessage("/p user " + student.split("-")[0] + " group remove _FROZEN_");		
+			}
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.split("-")[0], state));
 		}
 	}

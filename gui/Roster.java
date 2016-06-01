@@ -46,11 +46,14 @@ public class Roster extends Show {
 	}
 
 	private void addToRoster() {
-		if (selectedList.getId() == "users" && !AdminUI.roster.contains(selectedEntry.getTitle())) {
-			AdminUI.roster.add(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.add(selectedEntry);
-			userDisplayList.remove(selectedEntry);
+		if ((selectedEntry != null) && (selectedList != null))
+		{
+			if (selectedList.getId() == "users" && !AdminUI.roster.contains(selectedEntry.getTitle())) {
+				AdminUI.roster.add(selectedEntry.getTitle());
+				selectedEntry.setSelected(false);
+				rosterDisplayList.add(selectedEntry);
+				userDisplayList.remove(selectedEntry);
+			}
 		}
 		numberOfStudentsOnRoster.setText("Roster Count: " + AdminUI.roster.size());
 	}
@@ -62,11 +65,14 @@ public class Roster extends Show {
 	}
 
 	private void removeFromRoster() {
-		if (selectedList.getId() == "roster" && AdminUI.roster.contains(selectedEntry.getTitle())) {
-			AdminUI.roster.remove(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.remove(selectedEntry);
-			userDisplayList.add(selectedEntry);
+		if ((selectedEntry != null) && (selectedList != null))
+		{
+			if (selectedList.getId() == "roster" && AdminUI.roster.contains(selectedEntry.getTitle())) {
+				AdminUI.roster.remove(selectedEntry.getTitle());
+				selectedEntry.setSelected(false);
+				rosterDisplayList.remove(selectedEntry);
+				userDisplayList.add(selectedEntry);
+			}
 		}
 		numberOfStudentsOnRoster.setText("Roster Count: " + AdminUI.roster.size());
 	}

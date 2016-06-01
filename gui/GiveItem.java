@@ -32,10 +32,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 
 public class GiveItem extends Show {
 
@@ -92,9 +91,9 @@ public class GiveItem extends Show {
 		if (itmSt != null) {
 			itemMod = " " + itmSt.getItemDamage();
 		}
-		String amt = amountBox.getText() == null ? "1" : amountBox.getText();
+		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
 		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + userBox.getText().split("-")[0] + " "
-				+ GameRegistry.findUniqueIdentifierFor(tItem) + " " + amt + " " + itemMod);
+				+ tItem.getRegistryName() + " " + amt + " " + itemMod);
 	}
 
 	@Override
@@ -151,7 +150,7 @@ public class GiveItem extends Show {
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
 		// get all the items in the registry
-		RegistryNamespaced blockRegistry = GameData.getBlockRegistry();
+		FMLControlledNamespacedRegistry<Block> blockRegistry = GameData.getBlockRegistry();
 		Iterator<?> iterator = blockRegistry.iterator();
 
 		List<Item> blockList = new ArrayList<Item>();
@@ -161,7 +160,7 @@ public class GiveItem extends Show {
 			blockList.add(Item.getItemFromBlock(blocks));
 		}
 
-		RegistryNamespaced itemRegistry = GameData.getItemRegistry();
+		FMLControlledNamespacedRegistry<Item> itemRegistry = GameData.getItemRegistry();
 		iterator = itemRegistry.iterator();
 
 		List<Item> itemsList = new ArrayList<Item>();
