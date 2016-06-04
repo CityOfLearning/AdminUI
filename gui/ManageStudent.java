@@ -3,15 +3,6 @@ package com.dyn.admin.gui;
 import java.util.ArrayList;
 
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
-import com.dyn.admin.gui.GiveAchievement;
-import com.dyn.admin.gui.GiveItem;
-import com.dyn.admin.gui.Home;
-import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
-import com.dyn.admin.gui.RemoveItem;
-import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
@@ -26,7 +17,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -36,25 +27,25 @@ import net.minecraft.util.ResourceLocation;
 
 public class ManageStudent extends Show {
 
-	private EntityPlayerSP teacher;
-	private StringEntry selectedEntry;
+	private EntityPlayerSP admin;
+	private SelectStringEntry selectedEntry;
 	private ScrollableDisplayList rosterDisplayList;
 	private ArrayList<String> userlist = new ArrayList<String>();
 
 	public ManageStudent() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui Roster Management";
+		title = "Admin Gui Roster Management";
 	}
 
 	private void checkStudentInventory() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/invsee " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage("/invsee " + selectedEntry.getTitle().split("-")[0]);
 			}
 		}
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		selectedEntry = entry;
 	}
 
@@ -69,7 +60,7 @@ public class ManageStudent extends Show {
 	private void healStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/heal " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage("/heal " + selectedEntry.getTitle().split("-")[0]);
 			}
 		}
 	}
@@ -77,7 +68,7 @@ public class ManageStudent extends Show {
 	private void muteStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/mute " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage("/mute " + selectedEntry.getTitle().split("-")[0]);
 			}
 		}
 	}
@@ -86,7 +77,7 @@ public class ManageStudent extends Show {
 	public void setup() {
 		super.setup();
 
-		teacher = Minecraft.getMinecraft().thePlayer;
+		admin = Minecraft.getMinecraft().thePlayer;
 
 		for (String s : ServerMod.usernames) {
 			if (!AdminUI.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
@@ -101,7 +92,7 @@ public class ManageStudent extends Show {
 		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
 		for (String s : userlist) {
-			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -113,7 +104,7 @@ public class ManageStudent extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : AdminUI.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -142,7 +133,7 @@ public class ManageStudent extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -187,16 +178,18 @@ public class ManageStudent extends Show {
 		registerComponent(
 				new Button((int) (width * .525), (int) (height * .6), 60, 20, "Freeze").setClickListener(but -> {
 					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-						teacher.sendChatMessage("/p user " + selectedEntry.getTitle() + " group add _FROZEN_");
-						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle().split("-")[0], true));
+						admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group add _FROZEN_");
+						PacketDispatcher.sendToServer(
+								new RequestFreezePlayerMessage(selectedEntry.getTitle().split("-")[0], true));
 					}
 				}));
 
 		registerComponent(
 				new Button((int) (width * .675), (int) (height * .6), 60, 20, "Unfreeze").setClickListener(but -> {
 					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-						teacher.sendChatMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_");
-						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle().split("-")[0], false));
+						admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_");
+						PacketDispatcher.sendToServer(
+								new RequestFreezePlayerMessage(selectedEntry.getTitle().split("-")[0], false));
 					}
 				}));
 
@@ -227,14 +220,15 @@ public class ManageStudent extends Show {
 
 	private void switchMode(int mode) {
 		if (selectedEntry != null) {
-			teacher.sendChatMessage("/gamemode " + mode + " " + selectedEntry.getTitle().split("-")[0]);
+			admin.sendChatMessage("/gamemode " + mode + " " + selectedEntry.getTitle().split("-")[0]);
 		}
 	}
 
 	private void teleportStudentTo() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/tp " + selectedEntry.getTitle().split("-")[0] + " " + teacher.getDisplayNameString());
+				admin.sendChatMessage(
+						"/tp " + selectedEntry.getTitle().split("-")[0] + " " + admin.getDisplayNameString());
 			}
 		}
 	}
@@ -242,7 +236,8 @@ public class ManageStudent extends Show {
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/tp " + teacher.getDisplayNameString() + " " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage(
+						"/tp " + admin.getDisplayNameString() + " " + selectedEntry.getTitle().split("-")[0]);
 			}
 		}
 	}
@@ -252,8 +247,8 @@ public class ManageStudent extends Show {
 			rosterDisplayList.clear();
 			for (String student : AdminUI.roster) {
 				if (student.contains(textbox.getText())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
@@ -262,7 +257,7 @@ public class ManageStudent extends Show {
 	private void unmuteStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/unmute " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage("/unmute " + selectedEntry.getTitle().split("-")[0]);
 			}
 		}
 	}

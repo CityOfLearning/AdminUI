@@ -3,15 +3,6 @@ package com.dyn.admin.gui;
 import java.util.ArrayList;
 
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
-import com.dyn.admin.gui.GiveAchievement;
-import com.dyn.admin.gui.GiveItem;
-import com.dyn.admin.gui.Home;
-import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
-import com.dyn.admin.gui.RemoveItem;
-import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.CheckBox;
 import com.rabbit.gui.component.control.PictureButton;
@@ -30,13 +21,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class Home extends Show {
 
-	private EntityPlayerSP teacher;
+	private EntityPlayerSP admin;
 	private boolean isCreative;
 	private ScrollableDisplayList rosterDisplayList;
 
 	public Home() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui";
+		title = "Admin Gui";
 	}
 
 	private float mapClamp(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
@@ -48,9 +39,9 @@ public class Home extends Show {
 	public void setup() {
 		super.setup();
 
-		teacher = Minecraft.getMinecraft().thePlayer;
-		isCreative = teacher.capabilities.isCreativeMode;	
-		
+		admin = Minecraft.getMinecraft().thePlayer;
+		isCreative = admin.capabilities.isCreativeMode;
+
 		registerComponent(
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Teacher Control", TextAlignment.CENTER));
 
@@ -74,7 +65,7 @@ public class Home extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -103,22 +94,23 @@ public class Home extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : AdminUI.roster) {			
+		for (String s : AdminUI.roster) {
 			rlist.add(new StringEntry(s));
 		}
-		
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .35), (int) (height * .3), (int)(width / 3.3), 100, 15,
-				rlist);
+
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .35), (int) (height * .3), (int) (width / 3.3),
+				100, 15, rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
-		
-		
+
 		// gui main area
 		registerComponent(new CheckBox((int) (width * .4), (int) (height * .22), "Set Creative Mode", isCreative)
 				.setStatusChangedListener(btn -> toggleCreative()));
 
-		//registerComponent(new Button((int) (width * .2), (int) (height * .2), 150, 20, "Write Out Achievements")
-		//		.setClickListener(but -> PacketDispatcher.sendToServer(new HaveServerWriteAchievementsMessage())));
+		// registerComponent(new Button((int) (width * .2), (int) (height * .2),
+		// 150, 20, "Write Out Achievements")
+		// .setClickListener(but -> PacketDispatcher.sendToServer(new
+		// HaveServerWriteAchievementsMessage())));
 
 		// time of day
 		registerComponent(new TextLabel(width / 6, (int) (height * .75), width / 3, 20, "Set the Time of Day",
@@ -151,15 +143,15 @@ public class Home extends Show {
 			if (sTime < 0) {
 				sTime += 24000;
 			}
-			teacher.sendChatMessage("/time set " + sTime);
+			admin.sendChatMessage("/time set " + sTime);
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
-			teacher.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
+			admin.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
 		}
 	}
 
 	private void toggleCreative() {
-		teacher.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
+		admin.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
 		isCreative = !isCreative;
 	}
 }

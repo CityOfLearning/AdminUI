@@ -5,15 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
-import com.dyn.admin.gui.GiveAchievement;
-import com.dyn.admin.gui.GiveItem;
-import com.dyn.admin.gui.Home;
-import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
-import com.dyn.admin.gui.RemoveItem;
-import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -23,7 +14,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -33,8 +24,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class GiveItem extends Show {
 
@@ -47,10 +38,10 @@ public class GiveItem extends Show {
 
 	public GiveItem() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui";
+		title = "Admin Gui";
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "itms") {
 			itemBox.setText(entry.getTitle());
 		} else if (list.getId() == "roster") {
@@ -92,8 +83,8 @@ public class GiveItem extends Show {
 			itemMod = " " + itmSt.getItemDamage();
 		}
 		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
-		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + userBox.getText().split("-")[0] + " "
-				+ tItem.getRegistryName() + " " + amt + " " + itemMod);
+		Minecraft.getMinecraft().thePlayer.sendChatMessage(
+				"/give " + userBox.getText().split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod);
 	}
 
 	@Override
@@ -123,7 +114,7 @@ public class GiveItem extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -192,13 +183,14 @@ public class GiveItem extends Show {
 					List<ItemStack> subItem = new ArrayList<ItemStack>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
-						dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
-								int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+						dslist.add(
+								new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
+										int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					dslist.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
@@ -220,12 +212,13 @@ public class GiveItem extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : AdminUI.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (StringEntry entry,
-				DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+		rlist.add(new SelectStringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(),
+				(SelectStringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist,
+						mouseX, mouseY)));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
 				rlist);
@@ -262,17 +255,17 @@ public class GiveItem extends Show {
 						i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 						for (ItemStack is : subItem) {
 							if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
-								itemDisplayList
-										.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
-												int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+								itemDisplayList.add(new SelectStringEntry(is.getDisplayName(),
+										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 							}
 						}
 					} else {
 						ItemStack is = new ItemStack(i);
 						if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
-							itemDisplayList
-									.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
-											int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+							itemDisplayList.add(new SelectStringEntry(is.getDisplayName(),
+									(SelectStringEntry entry, DisplayList dlist, int mouseX,
+											int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 						}
 					}
 				}
@@ -281,8 +274,8 @@ public class GiveItem extends Show {
 			rosterDisplayList.clear();
 			for (String student : AdminUI.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "amt") {

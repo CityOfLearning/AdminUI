@@ -8,15 +8,6 @@ import com.dyn.achievements.achievement.RequirementType;
 import com.dyn.achievements.achievement.Requirements.BaseRequirement;
 import com.dyn.achievements.handlers.AchievementManager;
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
-import com.dyn.admin.gui.GiveAchievement;
-import com.dyn.admin.gui.GiveItem;
-import com.dyn.admin.gui.Home;
-import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
-import com.dyn.admin.gui.RemoveItem;
-import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserAchievementsProgressMessage;
@@ -41,7 +32,7 @@ public class CheckPlayerAchievements extends Show {
 
 	public CheckPlayerAchievements() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui";
+		title = "Admin Gui";
 	}
 
 	private void entrySelected(DropDown<String> dropdown, String selected) {
@@ -139,13 +130,7 @@ public class CheckPlayerAchievements extends Show {
 			for (ListEntry us : ulist) {
 				StringEntry se = (StringEntry) us;
 				infoDisplayList.add(se);
-				System.out.println(se.getTitle());
 			}
-			/*
-			 * infoDisplayList = new ScrollableDisplayList((int) (width * .5),
-			 * (int) (height * .25), width / 3, 150, 15, ulist);
-			 */
-
 		}
 
 	}
@@ -177,7 +162,7 @@ public class CheckPlayerAchievements extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)

@@ -3,15 +3,6 @@ package com.dyn.admin.gui;
 import java.util.ArrayList;
 
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
-import com.dyn.admin.gui.GiveAchievement;
-import com.dyn.admin.gui.GiveItem;
-import com.dyn.admin.gui.Home;
-import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
-import com.dyn.admin.gui.RemoveItem;
-import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
@@ -31,12 +22,12 @@ import net.minecraft.util.ResourceLocation;
 
 public class ManageStudents extends Show {
 
-	private EntityPlayerSP teacher;
+	private EntityPlayerSP admin;
 	private ArrayList<String> userlist = new ArrayList<String>();
 
 	public ManageStudents() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui Roster Management";
+		title = "Admin Gui Roster Management";
 	}
 
 	private void feedStudents() {
@@ -47,13 +38,10 @@ public class ManageStudents extends Show {
 
 	private void freezeUnfreezeStudents(boolean state) {
 		for (String student : AdminUI.roster) {
-			if(state)
-			{
-				teacher.sendChatMessage("/p user " + student.split("-")[0] + " group add _FROZEN_");		
-			} 
-			else 
-			{		
-				teacher.sendChatMessage("/p user " + student.split("-")[0] + " group remove _FROZEN_");		
+			if (state) {
+				admin.sendChatMessage("/p user " + student.split("-")[0] + " group add _FROZEN_");
+			} else {
+				admin.sendChatMessage("/p user " + student.split("-")[0] + " group remove _FROZEN_");
 			}
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.split("-")[0], state));
 		}
@@ -61,13 +49,13 @@ public class ManageStudents extends Show {
 
 	private void healStudents() {
 		for (String student : AdminUI.roster) {
-			teacher.sendChatMessage("/heal " + student.split("-")[0]);
+			admin.sendChatMessage("/heal " + student.split("-")[0]);
 		}
 	}
 
 	private void muteStudents() {
 		for (String student : AdminUI.roster) {
-			teacher.sendChatMessage("/mute " + student.split("-")[0]);
+			admin.sendChatMessage("/mute " + student.split("-")[0]);
 		}
 	}
 
@@ -81,7 +69,7 @@ public class ManageStudents extends Show {
 	public void setup() {
 		super.setup();
 
-		teacher = Minecraft.getMinecraft().thePlayer;
+		admin = Minecraft.getMinecraft().thePlayer;
 
 		for (String s : ServerMod.usernames) {
 			if (!AdminUI.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
@@ -113,7 +101,7 @@ public class ManageStudents extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(false)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -183,7 +171,7 @@ public class ManageStudents extends Show {
 
 	private void switchMode(int mode) {
 		for (String student : AdminUI.roster) {
-			teacher.sendChatMessage("/gamemode " + mode + " " + student.split("-")[0]);
+			admin.sendChatMessage("/gamemode " + mode + " " + student.split("-")[0]);
 		}
 	}
 
@@ -191,13 +179,13 @@ public class ManageStudents extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : AdminUI.roster) {
-			teacher.sendChatMessage("/tp " + student.split("-")[0] + " " + teacher.getDisplayNameString());
+			admin.sendChatMessage("/tp " + student.split("-")[0] + " " + admin.getDisplayNameString());
 		}
 	}
 
 	private void unmuteStudents() {
 		for (String student : AdminUI.roster) {
-			teacher.sendChatMessage("/unmute " + student.split("-")[0]);
+			admin.sendChatMessage("/unmute " + student.split("-")[0]);
 		}
 	}
 }

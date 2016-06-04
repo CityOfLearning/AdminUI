@@ -7,15 +7,6 @@ import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.gui.Info;
 import com.dyn.achievements.handlers.AchievementManager;
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
-import com.dyn.admin.gui.GiveAchievement;
-import com.dyn.admin.gui.GiveItem;
-import com.dyn.admin.gui.Home;
-import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
-import com.dyn.admin.gui.RemoveItem;
-import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;
 import com.rabbit.gui.background.DefaultBackground;
@@ -27,7 +18,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -37,15 +28,15 @@ public class GiveAchievement extends Show {
 
 	private ScrollableDisplayList achDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
-	private StringEntry selectedUser;
-	private StringEntry selectedAchievement;
+	private SelectStringEntry selectedUser;
+	private SelectStringEntry selectedAchievement;
 
 	public GiveAchievement() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui";
+		title = "Admin Gui";
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "achs") {
 			selectedAchievement = entry;
 		} else if (list.getId() == "roster") {
@@ -81,7 +72,7 @@ public class GiveAchievement extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -117,7 +108,7 @@ public class GiveAchievement extends Show {
 		List<ListEntry> dslist = new ArrayList<ListEntry>();
 
 		for (AchievementPlus a : AchievementManager.getAllAchievements()) {
-			dslist.add(new StringEntry(a.getName(), (StringEntry entry, DisplayList dlist, int mouseX,
+			dslist.add(new SelectStringEntry(a.getName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -131,7 +122,7 @@ public class GiveAchievement extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : AdminUI.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -145,7 +136,8 @@ public class GiveAchievement extends Show {
 				.setClickListener(but -> {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
-						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle().split("-")[0],
+						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(
+								selectedUser.getTitle().split("-")[0],
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));
@@ -169,16 +161,16 @@ public class GiveAchievement extends Show {
 			achDisplayList.clear();
 			for (AchievementPlus a : AchievementManager.getAllAchievements()) {
 				if (a.getName().contains(textbox.getText().toLowerCase())) {
-					achDisplayList.add(new StringEntry(a.getName(), (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					achDisplayList.add(new SelectStringEntry(a.getName(), (SelectStringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
 			for (String student : AdminUI.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
