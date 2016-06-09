@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.dyn.admin.AdminUI;
+import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
@@ -194,14 +196,17 @@ public class ManageStudentsInventory extends Show{
 		checkButton.setIsEnabled(!affectAllStudents);
 	}
 	
+	private void updateUserList(){
+		PacketDispatcher.sendToServer(new RequestUserlistMessage());
+		getStage().display(new ManageStudentsInventory());
+	}
 
 	@Override
 	public void setup() {
 		super.setup();
 		teacher = Minecraft.getMinecraft().thePlayer;
 
-		registerComponent(
-				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Inventory Manager", TextAlignment.CENTER));
+		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Student Inventory", TextAlignment.CENTER));
 
 		// the side buttons
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
@@ -283,7 +288,7 @@ public class ManageStudentsInventory extends Show{
 			}
 		}
 
-		registerComponent(new TextBox((int) (width * .2), (int) (height * .175), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .235), (int) (height * .175), width / 4, 20, "Search for User")
 				.setId("usersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 		registerComponent(new TextBox((int) (width * .55), (int) (height * .175), width / 4, 20, "Search for Item")
@@ -311,6 +316,10 @@ public class ManageStudentsInventory extends Show{
 				rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
+		
+		registerComponent(new Button((int)(width * .15), (int) (height * .175), 20, 20, "<>")
+				.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		
 
 		userBox = new TextBox((int) (width * .235), (int) (height * .725), (int)(width / 4), 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
@@ -324,10 +333,24 @@ public class ManageStudentsInventory extends Show{
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(itemBox);
 		
-		registerComponent(new CheckBox((int) (width * .15), (int) (height * .73), "All", affectAllStudents)
+		registerComponent(new CheckBox((int) (width * .15), (int) (height * .74), "All", affectAllStudents)
 				.setStatusChangedListener(but -> checkBoxChanged()));
 
-		checkButton = new Button((int) (width * .175) - 10, (int) (height * .825), 50, 20, "Check");
+		checkButton = new Button((int) (width * .175) - 10, (int) (height * .825), 50, 20, "Look");
+		checkButton.addHoverText("Look at inventory").setClickListener(but -> checkStudentInventory()).doesDrawHoverText(true);
+		registerComponent(checkButton);
+		
+		registerComponent(new Button((int) (width * .314) - 10, (int) (height * .825), 50, 20, "Clear")		
+				 .setClickListener(but -> clearPlayerInventory()).addHoverText("Clear Inventory").doesDrawHoverText(true));
+		
+		registerComponent(new Button((int) (width * .6) - 10, (int) (height * .825), 50, 20, "Give").addHoverText("Give Item").doesDrawHoverText(true)		
+				 .setClickListener(but -> giveItemToPlayer()));	
+		
+		registerComponent(new Button((int) (width * .739) - 10, (int) (height * .825), 50, 20, "Remove")
+				.setClickListener(but -> removeItemFromPlayer()).addHoverText("Remove Item").doesDrawHoverText(true));
+		
+		
+		/*checkButton = new Button((int) (width * .175) - 10, (int) (height * .825), 50, 20, "Check");
 		checkButton.setClickListener(but -> checkStudentInventory());
 		registerComponent(checkButton);
 		
@@ -338,7 +361,7 @@ public class ManageStudentsInventory extends Show{
 				 .setClickListener(but -> giveItemToPlayer()));	
 		
 		registerComponent(new Button((int) (width * .739) - 10, (int) (height * .825), 50, 20, "Remove")
-				.setClickListener(but -> removeItemFromPlayer()));
+				.setClickListener(but -> removeItemFromPlayer()));*/
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
