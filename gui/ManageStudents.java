@@ -172,9 +172,7 @@ public class ManageStudents extends Show {
 				.setClickListener(but -> switchMode(0)));
 
 		registerComponent(new Button((int) (width * .525), (int) (height * .8), 135, 20, "Clear Student Roster")
-				.setClickListener(but -> {
-					AdminUI.roster.clear();
-				}));
+				.setClickListener(but -> {AdminUI.roster.clear();}));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),

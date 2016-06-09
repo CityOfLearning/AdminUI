@@ -13,7 +13,7 @@ import com.dyn.admin.gui.GiveAchievement;
 import com.dyn.admin.gui.GiveItem;
 import com.dyn.admin.gui.Home;
 import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
+//import com.dyn.admin.gui.ManageStudents;
 import com.dyn.admin.gui.RemoveItem;
 import com.dyn.admin.gui.Roster;
 import com.dyn.admin.gui.UsernamesAndPasswords;
@@ -141,13 +141,7 @@ public class CheckPlayerAchievements extends Show {
 				infoDisplayList.add(se);
 				System.out.println(se.getTitle());
 			}
-			/*
-			 * infoDisplayList = new ScrollableDisplayList((int) (width * .5),
-			 * (int) (height * .25), width / 3, 150, 15, ulist);
-			 */
-
 		}
-
 	}
 
 	@Override
@@ -158,25 +152,25 @@ public class CheckPlayerAchievements extends Show {
 				TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
 						.addHoverText("Home Page").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .35), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
 						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
+		/*registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
+						.setClickListener(but -> getStage().display(new ManageStudents())));*/
 		
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)

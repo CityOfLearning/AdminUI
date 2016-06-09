@@ -5,15 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
 import com.dyn.admin.gui.GiveAchievement;
 import com.dyn.admin.gui.GiveItem;
 import com.dyn.admin.gui.Home;
 import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
 import com.dyn.admin.gui.RemoveItem;
 import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -23,7 +20,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -50,7 +47,7 @@ public class GiveItem extends Show {
 		title = "Teacher Gui";
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "itms") {
 			itemBox.setText(entry.getTitle());
 		} else if (list.getId() == "roster") {
@@ -104,50 +101,35 @@ public class GiveItem extends Show {
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Give Items", TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
 						.addHoverText("Home Page").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .35), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
 						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
-						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(false)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(true)
 						.addHoverText("Remove Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new RemoveItem())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
-						.addHoverText("Check Achievements").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
 		// get all the items in the registry
 		FMLControlledNamespacedRegistry<Block> blockRegistry = GameData.getBlockRegistry();
@@ -192,12 +174,12 @@ public class GiveItem extends Show {
 					List<ItemStack> subItem = new ArrayList<ItemStack>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
-						dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+						dslist.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
 								int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
+					dslist.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
@@ -220,11 +202,11 @@ public class GiveItem extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : AdminUI.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (StringEntry entry,
+		rlist.add(new SelectStringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (SelectStringEntry entry,
 				DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
@@ -263,7 +245,7 @@ public class GiveItem extends Show {
 						for (ItemStack is : subItem) {
 							if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 								itemDisplayList
-										.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+										.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
 												int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 							}
 						}
@@ -271,7 +253,7 @@ public class GiveItem extends Show {
 						ItemStack is = new ItemStack(i);
 						if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 							itemDisplayList
-									.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+									.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
 											int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 						}
 					}
@@ -281,7 +263,7 @@ public class GiveItem extends Show {
 			rosterDisplayList.clear();
 			for (String student : AdminUI.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}

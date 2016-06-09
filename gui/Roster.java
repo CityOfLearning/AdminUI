@@ -3,15 +3,10 @@ package com.dyn.admin.gui;
 import java.util.ArrayList;
 
 import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.CheckPlayerAchievements;
 import com.dyn.admin.gui.GiveAchievement;
-import com.dyn.admin.gui.GiveItem;
 import com.dyn.admin.gui.Home;
 import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudents;
-import com.dyn.admin.gui.RemoveItem;
 import com.dyn.admin.gui.Roster;
-import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.dyn.names.manager.NamesManager;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
@@ -25,7 +20,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 import net.minecraft.client.Minecraft;
@@ -33,7 +28,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class Roster extends Show {
 
-	private StringEntry selectedEntry;
+	private SelectStringEntry selectedEntry;
 	private DisplayList selectedList;
 	private ScrollableDisplayList userDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
@@ -58,7 +53,7 @@ public class Roster extends Show {
 		numberOfStudentsOnRoster.setText("Roster Count: " + AdminUI.roster.size());
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		selectedEntry = entry;
 		selectedList = list;
 
@@ -102,7 +97,7 @@ public class Roster extends Show {
 		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
 		for (String s : userlist) {
-			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -122,7 +117,7 @@ public class Roster extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : AdminUI.roster) {			
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -145,50 +140,30 @@ public class Roster extends Show {
 		registerComponent(numberOfStudentsOnRoster);
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
 						.addHoverText("Home Page").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .35), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(false)
 						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
-						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
-						.addHoverText("Give Items").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new GiveItem())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(true)
-						.addHoverText("Remove Items").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new RemoveItem())));
-
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
+						.addHoverText("Manage Inventory").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
+
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
-						.addHoverText("Check Achievements").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
@@ -200,7 +175,7 @@ public class Roster extends Show {
 			userDisplayList.clear();
 			for (String student : userlist) {
 				if (student.contains(textbox.getText())) {
-					userDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					userDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
@@ -208,7 +183,7 @@ public class Roster extends Show {
 			rosterDisplayList.clear();
 			for (String student : AdminUI.roster) {
 				if (student.contains(textbox.getText())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
