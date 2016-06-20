@@ -189,7 +189,7 @@ public class ManageStudentsInventory extends Show {
 			if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
 				return;
 			}
-			giveItem(userBox.getText());
+			removeItem(userBox.getText());
 		}
 	}
 
