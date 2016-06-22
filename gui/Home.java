@@ -140,27 +140,27 @@ public class Home extends Show {
 
 		// the side buttons
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(false)
-						.addHoverText("Home Page").doesDrawHoverText(true)
+				new ResourceLocation("dyn", "textures/gui/group.png")).setIsEnabled(false)
+						.addHoverText("Manage Classroom").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Home())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
-						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
+				new ResourceLocation("dyn", "textures/gui/roster.png")).setIsEnabled(true)
+						.addHoverText("Student Rosters").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Roster())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+				new ResourceLocation("dyn", "textures/gui/user.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudent())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
+				new ResourceLocation("dyn", "textures/gui/chest.png")).setIsEnabled(true)
 						.addHoverText("Manage Inventory").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
+				new ResourceLocation("dyn", "textures/gui/achievement.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
@@ -197,13 +197,13 @@ public class Home extends Show {
 						.setClickListener(but -> removeEffects()));
 
 		freezeButton = new PictureButton((int) (width * .55), (int) (height * .37), 50, 25,
-				new ResourceLocation("minecraft", "textures/items/cookie.png"));
+				new ResourceLocation("dyn", "textures/gui/user.png"));
 		freezeButton.setIsEnabled(true).addHoverText(freezeText).doesDrawHoverText(true)
 				.setClickListener(but -> freezeUnfreezeStudents());
 		registerComponent(freezeButton);
 
 		muteButton = new PictureButton((int) (width * .55), (int) (height * .485), 50, 25,
-				new ResourceLocation("minecraft", "textures/items/cake.png"));
+				new ResourceLocation("dyn", "textures/gui/unmute.png"));
 		muteButton.setIsEnabled(true).addHoverText(muteText).doesDrawHoverText(true)
 				.setClickListener(but -> muteUnmuteStudents());
 		registerComponent(muteButton);
@@ -215,7 +215,7 @@ public class Home extends Show {
 		registerComponent(modeButton);
 
 		registerComponent(new PictureButton((int) (width * .7), (int) (height * .37), 50, 25,
-				new ResourceLocation("minecraft", "textures/items/melon.png")).setIsEnabled(true)
+				new ResourceLocation("dyn", "textures/gui/heart.png")).setIsEnabled(true)
 						.addHoverText("Heal Students").doesDrawHoverText(true).setClickListener(but -> healStudents()));
 
 		registerComponent(new PictureButton((int) (width * .7), (int) (height * .485), 50, 25,

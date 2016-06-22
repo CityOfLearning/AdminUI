@@ -160,27 +160,27 @@ public class MonitorAchievements extends Show {
 
 		// the side buttons
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
-						.addHoverText("Home Page").doesDrawHoverText(true)
+				new ResourceLocation("dyn", "textures/gui/group.png")).setIsEnabled(true)
+						.addHoverText("Manage Classroom").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Home())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
-						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
+				new ResourceLocation("dyn", "textures/gui/roster.png")).setIsEnabled(true)
+						.addHoverText("Student Rosters").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Roster())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+				new ResourceLocation("dyn", "textures/gui/user.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudent())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
+				new ResourceLocation("dyn", "textures/gui/chest.png")).setIsEnabled(true)
 						.addHoverText("Manage Inventory").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(false)
+				new ResourceLocation("dyn", "textures/gui/achievement.png")).setIsEnabled(false)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 

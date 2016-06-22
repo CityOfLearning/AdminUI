@@ -35,7 +35,7 @@ public class Client implements Proxy {
 
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
-		}
+		} //realistically this will only occur if an admin but lets do sanity check
 		if ((ServerMod.status == PlayerLevel.ADMIN) && adminKey.isPressed()) {
 			PacketDispatcher.sendToServer(new RequestUserlistMessage());
 			GuiFoundation.proxy.display(new Home());

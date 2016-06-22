@@ -6,6 +6,8 @@ import com.dyn.DYNServerMod;
 import com.dyn.admin.proxy.Proxy;
 import com.dyn.admin.reference.MetaData;
 import com.dyn.admin.reference.Reference;
+import com.dyn.server.ServerMod;
+import com.dyn.server.utils.PlayerLevel;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -31,7 +33,9 @@ public class AdminUI {
 
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
-
+		if(ServerMod.status == PlayerLevel.ADMIN){
+			proxy.init();
+		}
 	}
 
 	@Mod.EventHandler
@@ -50,6 +54,6 @@ public class AdminUI {
 			DYNServerMod.logger.warn(e);
 		}
 
-		proxy.init();
+		
 	}
 }
