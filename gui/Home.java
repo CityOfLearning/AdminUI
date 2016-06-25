@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dyn.admin.AdminUI;
+import com.dyn.DYNServerConstants;
+import com.dyn.DYNServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
@@ -12,7 +13,10 @@ import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
+import com.rabbit.gui.component.control.CheckBoxButton;
+import com.rabbit.gui.component.control.CheckBoxPictureButton;
 import com.rabbit.gui.component.control.PictureButton;
+import com.rabbit.gui.component.control.PictureToggleButton;
 import com.rabbit.gui.component.control.Slider;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.Shape;
@@ -20,7 +24,7 @@ import com.rabbit.gui.component.display.ShapeType;
 import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -39,10 +43,11 @@ public class Home extends Show {
 	private String freezeText;
 	private String muteText;
 	private String modeText;
-	private PictureButton freezeButton;
-	private PictureButton muteButton;
-	private PictureButton modeButton;
+	private CheckBoxPictureButton freezeButton;
+	private PictureToggleButton muteButton;
+	private CheckBoxButton modeButton;
 	private TextLabel numberOfStudentsOnRoster;
+	private PictureToggleButton selfModeButton;
 
 	public Home() {
 		setBackground(new DefaultBackground());
@@ -56,13 +61,13 @@ public class Home extends Show {
 
 	// Manage Students
 	private void feedStudents() {
-		for (String student : AdminUI.roster) {
+		for (String student : DYNServerMod.roster) {
 			PacketDispatcher.sendToServer(new FeedPlayerMessage(student.split("-")[0]));
 		}
 	}
 
 	private void freezeUnfreezeStudents() {
-		for (String student : AdminUI.roster) {
+		for (String student : DYNServerMod.roster) {
 			if (isFrozen) {
 				admin.sendChatMessage("/p user " + student.split("-")[0] + " group add _FROZEN_");
 			} else {
@@ -88,7 +93,7 @@ public class Home extends Show {
 	}
 
 	private void healStudents() {
-		for (String student : AdminUI.roster) {
+		for (String student : DYNServerMod.roster) {
 			admin.sendChatMessage("/heal " + student.split("-")[0]);
 		}
 	}
@@ -99,7 +104,7 @@ public class Home extends Show {
 	}
 
 	private void muteUnmuteStudents() {
-		for (String student : AdminUI.roster) {
+		for (String student : DYNServerMod.roster) {
 			if (isMuted) {
 				admin.sendChatMessage("/mute " + student.split("-")[0]);
 			} else {
@@ -124,7 +129,7 @@ public class Home extends Show {
 	}
 
 	private void removeEffects() {
-		for (String student : AdminUI.roster) {
+		for (String student : DYNServerMod.roster) {
 			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student.split("-")[0]));
 		}
 	}
@@ -136,32 +141,35 @@ public class Home extends Show {
 		admin = Minecraft.getMinecraft().thePlayer;
 		isCreative = admin.capabilities.isCreativeMode;
 
-		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Home", TextAlignment.CENTER));
+		registerComponent(
+				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Classroom", TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/group.png")).setIsEnabled(false)
-						.addHoverText("Manage Classroom").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Home())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(false).addHoverText("Manage Classroom")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/roster.png")).setIsEnabled(true)
-						.addHoverText("Student Rosters").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Roster())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/user.png")).setIsEnabled(true)
-						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudent())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/chest.png")).setIsEnabled(true)
-						.addHoverText("Manage Inventory").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/achievement.png")).setIsEnabled(true)
-						.addHoverText("Award Achievements").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		// gui main area
@@ -170,22 +178,23 @@ public class Home extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		// View roster list
-		for (String s : AdminUI.roster) {
-			rlist.add(new StringEntry(s));
+		for (String s : DYNServerMod.roster) {
+			rlist.add(new SelectStringEntry(s));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .45), (int) (width / 3.3),
-				105, 15, rlist);
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .45), width / 3, 105, 15,
+				rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
 
 		// TODO Change Total to actual total count of roster
-		numberOfStudentsOnRoster = new TextLabel((int) (width * .37), (int) (height * .4), 90, 20,
-				AdminUI.roster.size() + "/" + "Total", TextAlignment.LEFT);
+		numberOfStudentsOnRoster = new TextLabel((int) (width * .37), (int) (height * .4), 90, 20, Color.black,
+				DYNServerMod.roster.size() + "/" + "Total", TextAlignment.LEFT);
 		registerComponent(numberOfStudentsOnRoster);
 
-		registerComponent(new Button((int) (width * .15), (int) (height * .35), 20, 20, "<>").addHoverText("Refresh")
-				.doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		registerComponent(
+				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
 
 		// Manage Students
 		registerComponent(new Button((int) (width * .55), (int) (height * .72), (int) (width / 3.3), 20,
@@ -196,57 +205,62 @@ public class Home extends Show {
 						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 						.setClickListener(but -> removeEffects()));
 
-		freezeButton = new PictureButton((int) (width * .55), (int) (height * .37), 50, 25,
-				new ResourceLocation("dyn", "textures/gui/user.png"));
+		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .37), 50, 25,
+				DYNServerConstants.FREEZE_IMAGE, false);
 		freezeButton.setIsEnabled(true).addHoverText(freezeText).doesDrawHoverText(true)
 				.setClickListener(but -> freezeUnfreezeStudents());
 		registerComponent(freezeButton);
 
-		muteButton = new PictureButton((int) (width * .55), (int) (height * .485), 50, 25,
-				new ResourceLocation("dyn", "textures/gui/unmute.png"));
+		muteButton = new PictureToggleButton((int) (width * .55), (int) (height * .485), 50, 25,
+				DYNServerConstants.UNMUTE_IMAGE, DYNServerConstants.MUTE_IMAGE, true);
 		muteButton.setIsEnabled(true).addHoverText(muteText).doesDrawHoverText(true)
 				.setClickListener(but -> muteUnmuteStudents());
 		registerComponent(muteButton);
 
-		modeButton = new PictureButton((int) (width * .55), (int) (height * .6), 50, 25,
-				new ResourceLocation("minecraft", "textures/items/bread.png"));
+		modeButton = new CheckBoxButton((int) (width * .55), (int) (height * .62), (int) (width / 3.3), 20,
+				"Toggle Creative", false);
 		modeButton.setIsEnabled(true).addHoverText(modeText).doesDrawHoverText(true)
 				.setClickListener(but -> switchMode());
 		registerComponent(modeButton);
 
-		registerComponent(new PictureButton((int) (width * .7), (int) (height * .37), 50, 25,
-				new ResourceLocation("dyn", "textures/gui/heart.png")).setIsEnabled(true)
-						.addHoverText("Heal Students").doesDrawHoverText(true).setClickListener(but -> healStudents()));
+		registerComponent(
+				new PictureButton((int) (width * .7), (int) (height * .37), 50, 25, DYNServerConstants.HEART_IMAGE)
+						.setIsEnabled(true).addHoverText("Heal Students").doesDrawHoverText(true)
+						.setClickListener(but -> healStudents()));
 
 		registerComponent(new PictureButton((int) (width * .7), (int) (height * .485), 50, 25,
 				new ResourceLocation("minecraft", "textures/items/chicken_cooked.png")).setIsEnabled(true)
 						.addHoverText("Feed Students").doesDrawHoverText(true).setClickListener(but -> feedStudents()));
 
-		registerComponent(new PictureButton((int) (width * .15), (int) (height * .2), 25, 25,
-				new ResourceLocation("minecraft", "textures/items/bread.png")).setIsEnabled(true)
-						.addHoverText("Set your gamemode").doesDrawHoverText(true)
-						.setClickListener(but -> toggleCreative()));
+		registerComponent(
+				selfModeButton = (PictureToggleButton) new PictureToggleButton((int) (width * .15), (int) (height * .2),
+						25, 25, DYNServerConstants.CREATIVE_IMAGE, DYNServerConstants.SURVIVAL_IMAGE, isCreative)
+								.setIsEnabled(true)
+								.addHoverText(
+										isCreative ? "Set your gamemode to Survival" : "Set your gamemode to Creative")
+								.doesDrawHoverText(true).setClickListener(but -> toggleCreative()));
 
 		// time of day
-		registerComponent(new TextLabel((int) (width * .53), (int) (height * .18), width / 3, 20, "Set the Time of Day",
-				TextAlignment.CENTER));
+
+		registerComponent(new TextLabel((int) (width * .53), (int) (height * .18), width / 3, 20, Color.black,
+				"Set the Time of Day", TextAlignment.CENTER));
 
 		registerComponent(new Slider((int) (width * .53) + 15, (int) (height * .23), 120, 20, 10)
-				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos))
+				.setMouseReleasedListener((Slider s, float pos) -> sliderChanged(s, pos))
 				.setProgress(
 						mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0, 24000, 0, 1))
 				.setId("tod"));
 
 		// speed slider
-		registerComponent(new TextLabel((int) (width * .23), (int) (height * .18), width / 3, 20,
+		registerComponent(new TextLabel((int) (width * .23), (int) (height * .18), width / 3, 20, Color.black,
 				"Set your movement speed", TextAlignment.CENTER));
 
 		registerComponent(new Slider((int) ((width * .23) + 15), (int) (height * .23), 120, 20, 10)
-				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos)).setId("speed"));
+				.setMouseReleasedListener((Slider s, float pos) -> sliderChanged(s, pos)).setId("speed"));
 
 		// The background
 		Picture background = new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)),
-				(int) (height * .8), new ResourceLocation("dyn", "textures/gui/background.png"));
+				(int) (height * .8), DYNServerConstants.BG1_IMAGE);
 
 		registerComponent(new Shape((int) (width / 7.4), (int) (height * .23) + 25, (int) (width * .733), 1,
 				ShapeType.RECT, Color.GRAY));
@@ -270,7 +284,7 @@ public class Home extends Show {
 	}
 
 	private void switchMode() {
-		for (String student : AdminUI.roster) {
+		for (String student : DYNServerMod.roster) {
 			admin.sendChatMessage("/gamemode " + (areStudentsInCreative ? "0 " : "1 ") + student.split("-")[0]);
 		}
 		areStudentsInCreative = !areStudentsInCreative;
@@ -292,7 +306,7 @@ public class Home extends Show {
 	private void teleportStudentsToMe() {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
-		for (String student : AdminUI.roster) {
+		for (String student : DYNServerMod.roster) {
 			admin.sendChatMessage("/tp " + student.split("-")[0] + " " + admin.getDisplayNameString());
 		}
 	}
@@ -300,6 +314,19 @@ public class Home extends Show {
 	private void toggleCreative() {
 		admin.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
 		isCreative = !isCreative;
+		if (isCreative) {
+			modeText = "Set your gamemode to Survival";
+			List<String> text = modeButton.getHoverText();
+			text.clear();
+			text.add(modeText);
+			selfModeButton.setHoverText(text);
+		} else {
+			modeText = "Set your gamemode to Creative";
+			List<String> text = modeButton.getHoverText();
+			text.clear();
+			text.add(modeText);
+			selfModeButton.setHoverText(text);
+		}
 	}
 
 	private void updateUserList() {

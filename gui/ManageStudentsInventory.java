@@ -1,10 +1,12 @@
 package com.dyn.admin.gui;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.dyn.admin.AdminUI;
+import com.dyn.DYNServerConstants;
+import com.dyn.DYNServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.rabbit.gui.background.DefaultBackground;
@@ -27,7 +29,6 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 
@@ -64,7 +65,7 @@ public class ManageStudentsInventory extends Show {
 	private void clearPlayerInventory() {
 		// Clear all students inventory
 		if (affectAllStudents) {
-			for (String student : AdminUI.roster) {
+			for (String student : DYNServerMod.roster) {
 				admin.sendChatMessage("/clear " + student.split("-")[0]);
 			}
 		} else if (!userBox.getText().isEmpty()) {
@@ -122,7 +123,7 @@ public class ManageStudentsInventory extends Show {
 
 	private void giveItemToPlayer() {
 		if (affectAllStudents) {
-			for (String student : AdminUI.roster) {
+			for (String student : DYNServerMod.roster) {
 				giveItem(student);
 			}
 		}
@@ -182,7 +183,7 @@ public class ManageStudentsInventory extends Show {
 	private void removeItemFromPlayer() {
 
 		if (affectAllStudents) {
-			for (String student : AdminUI.roster) {
+			for (String student : DYNServerMod.roster) {
 				removeItem(student);
 			}
 		} else {
@@ -196,35 +197,36 @@ public class ManageStudentsInventory extends Show {
 	@Override
 	public void setup() {
 		super.setup();
-		admin = Minecraft.getMinecraft().thePlayer;
 
 		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Student Inventory",
 				TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/group.png")).setIsEnabled(true)
-						.addHoverText("Manage Classroom").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Home())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/roster.png")).setIsEnabled(true)
-						.addHoverText("Student Rosters").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Roster())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/user.png")).setIsEnabled(true)
-						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudent())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/chest.png")).setIsEnabled(false)
-						.addHoverText("Manage Inventory").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(false).addHoverText("Manage Inventory")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/achievement.png")).setIsEnabled(true)
-						.addHoverText("Award Achievements").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		// get all the items in the registry
@@ -298,7 +300,7 @@ public class ManageStudentsInventory extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : AdminUI.roster) {
+		for (String s : DYNServerMod.roster) {
 			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
@@ -312,8 +314,9 @@ public class ManageStudentsInventory extends Show {
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
 
-		registerComponent(new Button((int) (width * .15), (int) (height * .175), 20, 20, "<>").addHoverText("Refresh")
-				.doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		registerComponent(
+				new PictureButton((int) (width * .15), (int) (height * .175), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
 
 		userBox = new TextBox((int) (width * .235), (int) (height * .725), width / 4, 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
@@ -327,8 +330,8 @@ public class ManageStudentsInventory extends Show {
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(itemBox);
 
-		registerComponent(new CheckBox((int) (width * .15), (int) (height * .74), "All", affectAllStudents)
-				.setStatusChangedListener(but -> checkBoxChanged()));
+		registerComponent(new CheckBox((int) (width * .15), (int) (height * .73), 15, 15, Color.green, Color.BLACK,
+				"All", affectAllStudents).setStatusChangedListener(but -> checkBoxChanged()));
 
 		checkButton = new Button((int) (width * .175) - 10, (int) (height * .825), 50, 20, "Look");
 		checkButton.addHoverText("Look at inventory").setClickListener(but -> checkStudentInventory())
@@ -345,27 +348,9 @@ public class ManageStudentsInventory extends Show {
 		registerComponent(new Button((int) (width * .739) - 10, (int) (height * .825), 50, 20, "Remove")
 				.setClickListener(but -> removeItemFromPlayer()).addHoverText("Remove Item").doesDrawHoverText(true));
 
-		/*
-		 * checkButton = new Button((int) (width * .175) - 10, (int) (height *
-		 * .825), 50, 20, "Check"); checkButton.setClickListener(but ->
-		 * checkStudentInventory()); registerComponent(checkButton);
-		 *
-		 * registerComponent(new Button((int) (width * .363) - 10, (int) (height
-		 * * .825), 50, 20, "Clear") .setClickListener(but ->
-		 * clearPlayerInventory()));
-		 *
-		 * registerComponent(new Button((int) (width * .551) - 10, (int) (height
-		 * * .825), 50, 20, "Give") .setClickListener(but ->
-		 * giveItemToPlayer()));
-		 *
-		 * registerComponent(new Button((int) (width * .739) - 10, (int) (height
-		 * * .825), 50, 20, "Remove") .setClickListener(but ->
-		 * removeItemFromPlayer()));
-		 */
-
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
-				new ResourceLocation("dyn", "textures/gui/background.png")));
+				DYNServerConstants.BG1_IMAGE));
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {
@@ -395,7 +380,7 @@ public class ManageStudentsInventory extends Show {
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
-			for (String student : AdminUI.roster) {
+			for (String student : DYNServerMod.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
 					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));

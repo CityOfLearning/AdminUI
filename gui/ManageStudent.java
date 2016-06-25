@@ -1,11 +1,12 @@
 package com.dyn.admin.gui;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dyn.admin.AdminUI;
+import com.dyn.DYNServerConstants;
+import com.dyn.DYNServerMod;
 import com.dyn.names.manager.NamesManager;
-import com.dyn.server.ServerMod;
 import com.dyn.server.database.DBManager;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
@@ -14,7 +15,10 @@ import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
+import com.rabbit.gui.component.control.CheckBoxButton;
+import com.rabbit.gui.component.control.CheckBoxPictureButton;
 import com.rabbit.gui.component.control.PictureButton;
+import com.rabbit.gui.component.control.PictureToggleButton;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -45,9 +49,9 @@ public class ManageStudent extends Show {
 	private String modeText;
 	private String dynUsername;
 	private String dynPassword;
-	private PictureButton muteButton;
-	private PictureButton freezeButton;
-	private PictureButton modeButton;
+	private PictureToggleButton muteButton;
+	private CheckBoxPictureButton freezeButton;
+	private CheckBoxButton modeButton;
 	private TextLabel dynUsernameLabel;
 	private TextLabel dynPasswordLabel;
 
@@ -149,8 +153,8 @@ public class ManageStudent extends Show {
 
 		admin = Minecraft.getMinecraft().thePlayer;
 
-		for (String s : ServerMod.usernames) {
-			if (!AdminUI.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+		for (String s : DYNServerMod.usernames) {
+			if (!DYNServerMod.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
 				userlist.add(s);
 			}
 		}
@@ -173,7 +177,7 @@ public class ManageStudent extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : AdminUI.roster) {
+		for (String s : DYNServerMod.roster) {
 			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
@@ -184,56 +188,60 @@ public class ManageStudent extends Show {
 		registerComponent(rosterDisplayList);
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/group.png")).setIsEnabled(true)
-						.addHoverText("Manage Classroom").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Home())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/roster.png")).setIsEnabled(true)
-						.addHoverText("Student Rosters").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Roster())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/user.png")).setIsEnabled(false)
-						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudent())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(false).addHoverText("Manage a Student")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/chest.png")).setIsEnabled(true)
-						.addHoverText("Manage Inventory").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/achievement.png")).setIsEnabled(true)
-						.addHoverText("Award Achievements").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		// GUI main section
-		registerComponent(new Button((int) (width * .15), (int) (height * .25), 20, 20, "<>").addHoverText("Refresh")
-				.doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		registerComponent(
+				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
 
-		freezeButton = new PictureButton((int) (width * .55), (int) (height * .25), 50, 25,
-				new ResourceLocation("dyn", "textures/gui/user.png"));
+		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
+				DYNServerConstants.FREEZE_IMAGE, false);
 		freezeButton.setIsEnabled(true).addHoverText(freezeText).doesDrawHoverText(true)
 				.setClickListener(but -> freezeUnfreezeStudent());
 		registerComponent(freezeButton);
 
-		muteButton = new PictureButton((int) (width * .55), (int) (height * .365), 50, 25,
-				new ResourceLocation("dyn", "textures/gui/unmute.png"));
+		muteButton = new PictureToggleButton((int) (width * .55), (int) (height * .365), 50, 25,
+				DYNServerConstants.UNMUTE_IMAGE, DYNServerConstants.MUTE_IMAGE, false);
 		muteButton.setIsEnabled(true).addHoverText(muteText).doesDrawHoverText(true)
 				.setClickListener(but -> muteUnmuteStudent());
 		registerComponent(muteButton);
 
-		modeButton = new PictureButton((int) (width * .55), (int) (height * .48), 50, 25,
-				new ResourceLocation("minecraft", "textures/items/bread.png"));
+		modeButton = new CheckBoxButton((int) (width * .55), (int) (height * .5), (int) (width / 3.3), 20,
+				"Toggle Creative", false);
 		modeButton.setIsEnabled(true).addHoverText(modeText).doesDrawHoverText(true)
 				.setClickListener(but -> switchMode());
 		registerComponent(modeButton);
 
-		registerComponent(new PictureButton((int) (width * .7), (int) (height * .25), 50, 25,
-				new ResourceLocation("dyn", "textures/gui/heart.png")).setIsEnabled(true)
-						.addHoverText("Heal Students").doesDrawHoverText(true).setClickListener(but -> healStudent()));
+		registerComponent(
+				new PictureButton((int) (width * .7), (int) (height * .25), 50, 25, DYNServerConstants.HEART_IMAGE)
+						.setIsEnabled(true).addHoverText("Heal Students").doesDrawHoverText(true)
+						.setClickListener(but -> healStudent()));
 
 		registerComponent(new PictureButton((int) (width * .7), (int) (height * .365), 50, 25,
 				new ResourceLocation("minecraft", "textures/items/chicken_cooked.png")).setIsEnabled(true)
@@ -257,16 +265,16 @@ public class ManageStudent extends Show {
 							}
 						}));
 
-		dynUsernameLabel = new TextLabel((int) (width * .15), (int) (height * .8), (int) (width / 2.5), 20,
+		dynUsernameLabel = new TextLabel((int) (width * .15), (int) (height * .8), (int) (width / 2.5), 20, Color.black,
 				"Username: " + dynUsername);
 		dynPasswordLabel = new TextLabel((int) (width * .15), (int) (height * .85), (int) (width / 2.5), 20,
-				"Password: " + dynPassword);
+				Color.black, "Password: " + dynPassword);
 		registerComponent(dynUsernameLabel);
 		registerComponent(dynPasswordLabel);
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
-				new ResourceLocation("dyn", "textures/gui/background.png")));
+				DYNServerConstants.BG1_IMAGE));
 	}
 
 	private void switchMode() {
@@ -311,7 +319,7 @@ public class ManageStudent extends Show {
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "rostersearch") {
 			rosterDisplayList.clear();
-			for (String student : AdminUI.roster) {
+			for (String student : DYNServerMod.roster) {
 				if (student.contains(textbox.getText())) {
 					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));

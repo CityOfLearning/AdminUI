@@ -3,12 +3,12 @@ package com.dyn.admin.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dyn.DYNServerConstants;
+import com.dyn.DYNServerMod;
 import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.achievement.RequirementType;
 import com.dyn.achievements.achievement.Requirements.BaseRequirement;
 import com.dyn.achievements.handlers.AchievementManager;
-import com.dyn.admin.AdminUI;
-import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;
 import com.dyn.server.packets.server.RequestUserAchievementsProgressMessage;
@@ -25,8 +25,6 @@ import com.rabbit.gui.component.list.entries.ListEntry;
 import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
-
-import net.minecraft.util.ResourceLocation;
 
 public class MonitorAchievements extends Show {
 
@@ -62,7 +60,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.CRAFT)) {
 				ulist.add(new SelectStringEntry("-Craft-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.CRAFT)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -71,7 +69,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.SMELT)) {
 				ulist.add(new SelectStringEntry("-Smelt-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.SMELT)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -80,7 +78,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.PICKUP)) {
 				ulist.add(new SelectStringEntry("-Pickup-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.PICKUP)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -89,7 +87,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.STAT)) {
 				ulist.add(new SelectStringEntry("-Special-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.STAT)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -98,7 +96,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.KILL)) {
 				ulist.add(new SelectStringEntry("-Kill-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.KILL)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -107,7 +105,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.BREW)) {
 				ulist.add(new SelectStringEntry("-Brew-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.BREW)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -116,7 +114,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.PLACE)) {
 				ulist.add(new SelectStringEntry("-Place-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.PLACE)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -124,7 +122,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.BREAK)) {
 				ulist.add(new SelectStringEntry("-Break-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.BREAK)) {
 				ulist.add(new SelectStringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -132,7 +130,7 @@ public class MonitorAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.LOCATION)) {
 				ulist.add(new SelectStringEntry("-Location-"));
 			}
-			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
 					.getRequirementsByType(RequirementType.LOCATION)) {
 				ulist.add(new SelectStringEntry(
 						(r.getTotalAquired() > 0 ? "[X]-" : "[ ]-") + r.getRequirementEntityName()));
@@ -159,29 +157,31 @@ public class MonitorAchievements extends Show {
 				TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/group.png")).setIsEnabled(true)
-						.addHoverText("Manage Classroom").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Home())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/roster.png")).setIsEnabled(true)
-						.addHoverText("Student Rosters").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Roster())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/user.png")).setIsEnabled(true)
-						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudent())));
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
+						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/chest.png")).setIsEnabled(true)
-						.addHoverText("Manage Inventory").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("dyn", "textures/gui/achievement.png")).setIsEnabled(false)
-						.addHoverText("Award Achievements").doesDrawHoverText(true)
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(false).addHoverText("Award Achievements")
+						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		registerComponent(new TextBox((int) (width * .235), (int) (height * .2), width / 4, 20, "Search for User")
@@ -191,8 +191,9 @@ public class MonitorAchievements extends Show {
 				.setId("achsearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		registerComponent(new Button((int) (width * .15), (int) (height * .2), 20, 20, "<>").addHoverText("Refresh")
-				.doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		registerComponent(
+				new PictureButton((int) (width * .15), (int) (height * .2), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
 
 		List<ListEntry> dslist = new ArrayList<ListEntry>();
 
@@ -210,7 +211,7 @@ public class MonitorAchievements extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : AdminUI.roster) {
+		for (String s : DYNServerMod.roster) {
 			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
@@ -238,17 +239,9 @@ public class MonitorAchievements extends Show {
 
 		registerComponent(infoDisplayList);
 
-		/*
-		 * registerComponent(new Button((int) (width * .2), (int) (height * .8),
-		 * width / 4, 20, "Achievement Info") .setClickListener(but -> { if
-		 * (selectedAchievement != null) { getStage().display( new
-		 * Info(AchievementManager.findAchievementByName(selectedAchievement.
-		 * getTitle()))); } }));
-		 */
-
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
-				new ResourceLocation("dyn", "textures/gui/background.png")));
+				DYNServerConstants.BG1_IMAGE));
 
 	}
 
@@ -263,7 +256,7 @@ public class MonitorAchievements extends Show {
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
-			for (String student : AdminUI.roster) {
+			for (String student : DYNServerMod.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
 					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
