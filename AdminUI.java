@@ -1,10 +1,13 @@
 package com.dyn.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dyn.DYNServerMod;
 import com.dyn.admin.proxy.Proxy;
 import com.dyn.admin.reference.MetaData;
 import com.dyn.admin.reference.Reference;
-import com.dyn.server.utils.PlayerLevel;
+import com.dyn.utils.PlayerLevel;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
@@ -15,6 +18,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
 public class AdminUI {
+	
+	public static List<String> adminSubRoster = new ArrayList<String>();
+	
 	@Mod.Instance(Reference.MOD_ID)
 	public static AdminUI instance;
 

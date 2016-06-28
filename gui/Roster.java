@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.admin.AdminUI;
 import com.dyn.names.manager.NamesManager;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.utils.BooleanChangeListener;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -34,18 +36,28 @@ public class Roster extends Show {
 	public Roster() {
 		setBackground(new DefaultBackground());
 		title = "Admin Gui Roster Management";
+
+		BooleanChangeListener listener = event -> {
+			if (event.getDispatcher().getFlag()) {
+				userDisplayList.clear();
+				for (String student : DYNServerMod.usernames) {
+					userDisplayList.add(new SelectStringEntry(student));
+				}
+			}
+		};
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener);
 	}
 
 	private void addToRoster() {
 		if ((selectedEntry != null) && (selectedList != null)) {
-			if ((selectedList.getId() == "users") && !DYNServerMod.roster.contains(selectedEntry.getTitle())) {
-				DYNServerMod.roster.add(selectedEntry.getTitle());
+			if ((selectedList.getId() == "users") && !AdminUI.adminSubRoster.contains(selectedEntry.getTitle())) {
+				AdminUI.adminSubRoster.add(selectedEntry.getTitle());
 				selectedEntry.setSelected(false);
 				rosterDisplayList.add(selectedEntry);
 				userDisplayList.remove(selectedEntry);
 			}
 		}
-		numberOfStudentsOnRoster.setText("Roster Count: " + DYNServerMod.roster.size());
+		numberOfStudentsOnRoster.setText("Roster Count: " + AdminUI.adminSubRoster.size());
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -56,14 +68,14 @@ public class Roster extends Show {
 
 	private void removeFromRoster() {
 		if ((selectedEntry != null) && (selectedList != null)) {
-			if ((selectedList.getId() == "roster") && DYNServerMod.roster.contains(selectedEntry.getTitle())) {
-				DYNServerMod.roster.remove(selectedEntry.getTitle());
+			if ((selectedList.getId() == "roster") && AdminUI.adminSubRoster.contains(selectedEntry.getTitle())) {
+				AdminUI.adminSubRoster.remove(selectedEntry.getTitle());
 				selectedEntry.setSelected(false);
 				rosterDisplayList.remove(selectedEntry);
 				userDisplayList.add(selectedEntry);
 			}
 		}
-		numberOfStudentsOnRoster.setText("Roster Count: " + DYNServerMod.roster.size());
+		numberOfStudentsOnRoster.setText("Roster Count: " + AdminUI.adminSubRoster.size());
 	}
 
 	@Override
@@ -71,7 +83,7 @@ public class Roster extends Show {
 		super.setup();
 
 		for (String s : DYNServerMod.usernames) {
-			if (!DYNServerMod.roster.contains(s + "-" + NamesManager.getDYNUsername(s))
+			if (!AdminUI.adminSubRoster.contains(s + "-" + NamesManager.getDYNUsername(s))
 					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
 				// Erin added this!
 				s += "-" + NamesManager.getDYNUsername(s);
@@ -107,8 +119,8 @@ public class Roster extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : DYNServerMod.roster) {
-			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
+		for (String student : AdminUI.adminSubRoster) {
+			rlist.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -126,36 +138,37 @@ public class Roster extends Show {
 
 		registerComponent(
 				new PictureButton((width / 2) - 10, (int) (height * .8), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		numberOfStudentsOnRoster = new TextLabel((int) (width * .5) + 20, (int) (height * .2), 90, 20,
-				"Roster Count: " + DYNServerMod.roster.size(), TextAlignment.LEFT);
+				"Roster Count: " + AdminUI.adminSubRoster.size(), TextAlignment.LEFT);
 		registerComponent(numberOfStudentsOnRoster);
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
 				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
 				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(false).addHoverText("Student Rosters")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
 				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
 				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
@@ -176,17 +189,12 @@ public class Roster extends Show {
 			}
 		} else if (textbox.getId() == "rostersearch") {
 			rosterDisplayList.clear();
-			for (String student : DYNServerMod.roster) {
+			for (String student : AdminUI.adminSubRoster) {
 				if (student.contains(textbox.getText())) {
 					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
-	}
-
-	private void updateUserList() {
-		PacketDispatcher.sendToServer(new RequestUserlistMessage());
-		getStage().display(new Roster());
 	}
 }

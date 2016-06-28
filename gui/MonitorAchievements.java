@@ -13,6 +13,7 @@ import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;
 import com.dyn.server.packets.server.RequestUserAchievementsProgressMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.utils.BooleanChangeListener;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -30,13 +31,23 @@ public class MonitorAchievements extends Show {
 
 	private static ScrollableDisplayList infoDisplayList;
 	private ScrollableDisplayList achDisplayList;
-	private ScrollableDisplayList rosterDisplayList;
+	private ScrollableDisplayList userDisplayList;
 	private SelectStringEntry selectedUser;
 	private SelectStringEntry selectedAchievement;
 
 	public MonitorAchievements() {
 		setBackground(new DefaultBackground());
 		title = "Admin Gui";
+
+		BooleanChangeListener listener = event -> {
+			if (event.getDispatcher().getFlag()) {
+				userDisplayList.clear();
+				for (String student : DYNServerMod.usernames) {
+					userDisplayList.add(new SelectStringEntry(student));
+				}
+			}
+		};
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener);
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -49,8 +60,7 @@ public class MonitorAchievements extends Show {
 			selectedAchievement = entry;
 		} else if (list.getId() == "roster") {
 			selectedUser = entry;
-			PacketDispatcher
-					.sendToServer(new RequestUserAchievementsProgressMessage(selectedUser.getTitle().split("-")[0]));
+			PacketDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(selectedUser.getTitle()));
 		}
 
 		if ((selectedUser != null) && (selectedAchievement != null)) {
@@ -157,32 +167,37 @@ public class MonitorAchievements extends Show {
 				TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
 				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
 				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
 				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
 				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(false).addHoverText("Award Achievements")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
+
+		registerComponent(
+				new PictureButton((int) (width * .15), (int) (height * .2), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		registerComponent(new TextBox((int) (width * .235), (int) (height * .2), width / 4, 20, "Search for User")
 				.setId("usersearch")
@@ -190,10 +205,6 @@ public class MonitorAchievements extends Show {
 		registerComponent(new TextBox((int) (width * .15), (int) (height * .55), width / 3, 20, "Search Achievements")
 				.setId("achsearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-
-		registerComponent(
-				new PictureButton((int) (width * .15), (int) (height * .2), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
 
 		List<ListEntry> dslist = new ArrayList<ListEntry>();
 
@@ -211,23 +222,21 @@ public class MonitorAchievements extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : DYNServerMod.roster) {
+		for (String s : DYNServerMod.usernames) {
 			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .3), width / 3, 50, 15,
-				rlist);
-		rosterDisplayList.setId("roster");
-		registerComponent(rosterDisplayList);
+		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .3), width / 3, 50, 15, rlist);
+		userDisplayList.setId("roster");
+		registerComponent(userDisplayList);
 
 		// we need a way to get the players DYN account too if possible...
 		registerComponent(new Button((int) (width * .56), (int) (height * .8), width / 4, 20, "Award to Player")
 				.setClickListener(but -> {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
-						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(
-								selectedUser.getTitle().split("-")[0],
+						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle(),
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));
@@ -255,18 +264,13 @@ public class MonitorAchievements extends Show {
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {
-			rosterDisplayList.clear();
-			for (String student : DYNServerMod.roster) {
+			userDisplayList.clear();
+			for (String student : DYNServerMod.usernames) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
+					userDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
-	}
-
-	private void updateUserList() {
-		PacketDispatcher.sendToServer(new RequestUserlistMessage());
-		getStage().display(new MonitorAchievements());
 	}
 }

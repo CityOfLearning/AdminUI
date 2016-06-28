@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.admin.AdminUI;
 import com.dyn.names.manager.NamesManager;
 import com.dyn.server.database.DBManager;
 import com.dyn.server.packets.PacketDispatcher;
@@ -13,6 +14,9 @@ import com.dyn.server.packets.server.FeedPlayerMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
 import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.utils.BooleanChangeListener;
+import com.dyn.utils.CCOLPlayerInfo;
+import com.google.gson.JsonObject;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBoxButton;
@@ -37,7 +41,7 @@ public class ManageStudent extends Show {
 
 	private EntityPlayerSP admin;
 	private SelectStringEntry selectedEntry;
-	private ScrollableDisplayList rosterDisplayList;
+	private ScrollableDisplayList userDisplayList;
 	private ArrayList<String> userlist = new ArrayList<String>();
 
 	private boolean isFrozen;
@@ -81,7 +85,7 @@ public class ManageStudent extends Show {
 	private void feedStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				PacketDispatcher.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle().split("-")[0]));
+				PacketDispatcher.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle()));
 			}
 		}
 	}
@@ -89,13 +93,13 @@ public class ManageStudent extends Show {
 	private void freezeUnfreezeStudent() {
 		if (selectedEntry != null) {
 			if (isFrozen) {
-				admin.sendChatMessage("/p user " + selectedEntry.getTitle().split("-")[0] + " group add _FROZEN_");
+				admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group add _FROZEN_");
 			} else {
-				admin.sendChatMessage("/p user " + selectedEntry.getTitle().split("-")[0] + " group remove _FROZEN_");
+				admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_");
 			}
 
 			PacketDispatcher
-					.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle().split("-")[0], isFrozen));
+					.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
 
 			isFrozen = !isFrozen;
 			if (isFrozen) {
@@ -117,7 +121,7 @@ public class ManageStudent extends Show {
 	private void healStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				admin.sendChatMessage("/heal " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage("/heal " + selectedEntry.getTitle());
 			}
 		}
 	}
@@ -125,9 +129,9 @@ public class ManageStudent extends Show {
 	private void muteUnmuteStudent() {
 		if (selectedEntry != null) {
 			if (isMuted) {
-				admin.sendChatMessage("/mute " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage("/mute " + selectedEntry.getTitle());
 			} else {
-				admin.sendChatMessage("/unmute " + selectedEntry.getTitle().split("-")[0]);
+				admin.sendChatMessage("/unmute " + selectedEntry.getTitle());
 			}
 
 			isMuted = !isMuted;
@@ -153,10 +157,8 @@ public class ManageStudent extends Show {
 
 		admin = Minecraft.getMinecraft().thePlayer;
 
-		for (String s : DYNServerMod.usernames) {
-			if (!DYNServerMod.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+		for (String s : AdminUI.adminSubRoster) {
 				userlist.add(s);
-			}
 		}
 
 		registerComponent(
@@ -177,40 +179,40 @@ public class ManageStudent extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : DYNServerMod.roster) {
+		for (String s : AdminUI.adminSubRoster) {
 			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
+		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
 				rlist);
-		rosterDisplayList.setId("roster");
-		registerComponent(rosterDisplayList);
+		userDisplayList.setId("roster");
+		registerComponent(userDisplayList);
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
 				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
 				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
 				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(false).addHoverText("Manage a Student")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
 				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
@@ -218,8 +220,9 @@ public class ManageStudent extends Show {
 		// GUI main section
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
-
+						.addHoverText("Refresh").doesDrawHoverText(true)
+						.setClickListener(but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
+		
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
 		freezeButton.setIsEnabled(true).addHoverText(freezeText).doesDrawHoverText(true)
@@ -261,7 +264,7 @@ public class ManageStudent extends Show {
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
 								PacketDispatcher
-										.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle().split("-")[0]));
+										.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
 							}
 						}));
 
@@ -280,7 +283,7 @@ public class ManageStudent extends Show {
 	private void switchMode() {
 		if (selectedEntry != null) {
 			admin.sendChatMessage(
-					"/gamemode " + (isStudentInCreative ? "0 " : "1 ") + selectedEntry.getTitle().split("-")[0]);
+					"/gamemode " + (isStudentInCreative ? "0 " : "1 ") + selectedEntry.getTitle());
 			isStudentInCreative = !isStudentInCreative;
 			if (isStudentInCreative) {
 				modeText = "Survival Mode";
@@ -302,7 +305,7 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				admin.sendChatMessage(
-						"/tp " + selectedEntry.getTitle().split("-")[0] + " " + admin.getDisplayNameString());
+						"/tp " + selectedEntry.getTitle() + " " + admin.getDisplayNameString());
 			}
 		}
 	}
@@ -311,32 +314,33 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				admin.sendChatMessage(
-						"/tp " + admin.getDisplayNameString() + " " + selectedEntry.getTitle().split("-")[0]);
+						"/tp " + admin.getDisplayNameString() + " " + selectedEntry.getTitle());
 			}
 		}
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "rostersearch") {
-			rosterDisplayList.clear();
-			for (String student : DYNServerMod.roster) {
+			userDisplayList.clear();
+			for (String student : AdminUI.adminSubRoster) {
 				if (student.contains(textbox.getText())) {
-					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
+					userDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
 	}
 
-	private void updateUserList() {
-		PacketDispatcher.sendToServer(new RequestUserlistMessage());
-		getStage().display(new Home());
-	}
-
 	private void usernameAndPassword() {
 		if (selectedEntry != null) {
-			dynUsername = NamesManager.getDYNUsername(selectedEntry.getTitle().split("-")[0]);
-			dynPassword = DBManager.getPasswordFromDYNUsername(dynUsername);
+			for (String student : AdminUI.adminSubRoster) {
+				if(student.equals(selectedEntry.getTitle())){
+					
+					JsonObject info = DBManager.getInfoFromUserAccount(DBManager.getUserIDFromMCUsername(student));
+					dynUsername = info.get("username").getAsString();
+					dynPassword = info.get("password").getAsString();
+				}
+			}
 		} else {
 			dynUsername = "";
 			dynPassword = "";
