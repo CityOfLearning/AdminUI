@@ -5,17 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dyn.DYNServerConstants;
-import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.names.manager.NamesManager;
 import com.dyn.server.database.DBManager;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
 import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
-import com.dyn.utils.BooleanChangeListener;
-import com.dyn.utils.CCOLPlayerInfo;
 import com.google.gson.JsonObject;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -98,8 +94,7 @@ public class ManageStudent extends Show {
 				admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_");
 			}
 
-			PacketDispatcher
-					.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
 
 			isFrozen = !isFrozen;
 			if (isFrozen) {
@@ -158,7 +153,7 @@ public class ManageStudent extends Show {
 		admin = Minecraft.getMinecraft().thePlayer;
 
 		for (String s : AdminUI.adminSubRoster) {
-				userlist.add(s);
+			userlist.add(s);
 		}
 
 		registerComponent(
@@ -220,9 +215,9 @@ public class ManageStudent extends Show {
 		// GUI main section
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true)
-						.setClickListener(but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
-		
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
+
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
 		freezeButton.setIsEnabled(true).addHoverText(freezeText).doesDrawHoverText(true)
@@ -263,8 +258,7 @@ public class ManageStudent extends Show {
 						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-								PacketDispatcher
-										.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
+								PacketDispatcher.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
 							}
 						}));
 
@@ -282,8 +276,7 @@ public class ManageStudent extends Show {
 
 	private void switchMode() {
 		if (selectedEntry != null) {
-			admin.sendChatMessage(
-					"/gamemode " + (isStudentInCreative ? "0 " : "1 ") + selectedEntry.getTitle());
+			admin.sendChatMessage("/gamemode " + (isStudentInCreative ? "0 " : "1 ") + selectedEntry.getTitle());
 			isStudentInCreative = !isStudentInCreative;
 			if (isStudentInCreative) {
 				modeText = "Survival Mode";
@@ -304,8 +297,7 @@ public class ManageStudent extends Show {
 	private void teleportStudentTo() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				admin.sendChatMessage(
-						"/tp " + selectedEntry.getTitle() + " " + admin.getDisplayNameString());
+				admin.sendChatMessage("/tp " + selectedEntry.getTitle() + " " + admin.getDisplayNameString());
 			}
 		}
 	}
@@ -313,8 +305,7 @@ public class ManageStudent extends Show {
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				admin.sendChatMessage(
-						"/tp " + admin.getDisplayNameString() + " " + selectedEntry.getTitle());
+				admin.sendChatMessage("/tp " + admin.getDisplayNameString() + " " + selectedEntry.getTitle());
 			}
 		}
 	}
@@ -334,8 +325,8 @@ public class ManageStudent extends Show {
 	private void usernameAndPassword() {
 		if (selectedEntry != null) {
 			for (String student : AdminUI.adminSubRoster) {
-				if(student.equals(selectedEntry.getTitle())){
-					
+				if (student.equals(selectedEntry.getTitle())) {
+
 					JsonObject info = DBManager.getInfoFromUserAccount(DBManager.getUserIDFromMCUsername(student));
 					dynUsername = info.get("username").getAsString();
 					dynPassword = info.get("password").getAsString();

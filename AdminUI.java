@@ -18,9 +18,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
 public class AdminUI {
-	
+
 	public static List<String> adminSubRoster = new ArrayList<String>();
-	
+
 	@Mod.Instance(Reference.MOD_ID)
 	public static AdminUI instance;
 

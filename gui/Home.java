@@ -58,7 +58,7 @@ public class Home extends Show {
 		freezeText = "Freeze Students";
 		muteText = "Mute Students";
 		modeText = "Creative Mode";
-		
+
 		BooleanChangeListener listener = event -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
@@ -205,8 +205,8 @@ public class Home extends Show {
 
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true)
-						.setClickListener(but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		// Manage Students
 		registerComponent(new Button((int) (width * .55), (int) (height * .72), (int) (width / 3.3), 20,
