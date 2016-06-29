@@ -25,7 +25,7 @@ import com.rabbit.gui.component.display.ShapeType;
 import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.SelectStringEntry;
+import com.rabbit.gui.component.list.entries.StringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -63,7 +63,7 @@ public class Home extends Show {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
 				for (String student : DYNServerMod.usernames) {
-					rosterDisplayList.add(new SelectStringEntry(student));
+					rosterDisplayList.add(new StringEntry(student));
 				}
 			}
 		};
@@ -190,7 +190,7 @@ public class Home extends Show {
 
 		// View roster list
 		for (String student : DYNServerMod.usernames) {
-			rlist.add(new SelectStringEntry(student));
+			rlist.add(new StringEntry(student));
 		}
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .45), width / 3, 105, 15,
