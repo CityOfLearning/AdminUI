@@ -9,7 +9,7 @@ public class MetaData {
 		metadata.modId = Reference.MOD_ID;
 		metadata.name = Reference.MOD_NAME;
 		metadata.description = "A control panel for admins on the DYN server";
-		metadata.url = "https://github.com/Digital-Youth-Network/AdminUI";
+		metadata.url = "https://github.com/CityOfLearning/AdminUI";
 		metadata.version = Reference.VERSION;
 		metadata.authorList = Arrays.asList("Dom Amato");
 		metadata.credits = "";
