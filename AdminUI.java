@@ -27,9 +27,6 @@ public class AdminUI {
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static Proxy proxy;
 
-//	@Mod.Metadata(Reference.MOD_ID)
-//	public ModMetadata metadata;
-
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
 		if (DYNServerMod.status == PlayerLevel.ADMIN) {
@@ -44,7 +41,6 @@ public class AdminUI {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		//metadata = MetaData.init(metadata);
 		MetaData.init(event.getModMetadata());
 	}
 }

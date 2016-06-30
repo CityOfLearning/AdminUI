@@ -83,10 +83,8 @@ public class Roster extends Show {
 		super.setup();
 
 		for (String s : DYNServerMod.usernames) {
-			if (!AdminUI.adminSubRoster.contains(s + "-" + NamesManager.getDYNUsername(s))
+			if (!AdminUI.adminSubRoster.contains(s)
 					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
-				// Erin added this!
-				s += "-" + NamesManager.getDYNUsername(s);
 				userlist.add(s);
 			}
 		}
