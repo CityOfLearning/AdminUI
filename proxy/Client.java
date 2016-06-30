@@ -23,11 +23,14 @@ public class Client implements Proxy {
 
 	@Override
 	public void init() {
-		MinecraftForge.EVENT_BUS.register(this);
+		if (DYNServerMod.status == PlayerLevel.ADMIN) {
 
-		adminKey = new KeyBinding("key.toggle.adminui", Keyboard.KEY_M, "key.categories.toggle");
+			MinecraftForge.EVENT_BUS.register(this);
 
-		ClientRegistry.registerKeyBinding(adminKey);
+			adminKey = new KeyBinding("key.toggle.adminui", Keyboard.KEY_M, "key.categories.toggle");
+
+			ClientRegistry.registerKeyBinding(adminKey);
+		}
 	}
 
 	@SubscribeEvent

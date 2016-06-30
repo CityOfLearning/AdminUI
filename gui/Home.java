@@ -78,6 +78,7 @@ public class Home extends Show {
 	}
 
 	private void freezeUnfreezeStudents() {
+		isFrozen = !isFrozen;
 		for (String student : DYNServerMod.usernames) {
 			if (isFrozen) {
 				admin.sendChatMessage("/p user " + student + " group add _FROZEN_");
@@ -87,7 +88,6 @@ public class Home extends Show {
 
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, isFrozen));
 		}
-		isFrozen = !isFrozen;
 		if (isFrozen) {
 			freezeText = "UnFreeze Students";
 			List<String> text = freezeButton.getHoverText();

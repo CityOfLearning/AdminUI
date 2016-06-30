@@ -88,15 +88,14 @@ public class ManageStudent extends Show {
 
 	private void freezeUnfreezeStudent() {
 		if (selectedEntry != null) {
+			isFrozen = !isFrozen;
 			if (isFrozen) {
 				admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group add _FROZEN_");
 			} else {
 				admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_");
 			}
 
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
-
-			isFrozen = !isFrozen;
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));			
 			if (isFrozen) {
 				freezeText = "UnFreeze Students";
 				List<String> text = freezeButton.getHoverText();

@@ -29,9 +29,7 @@ public class AdminUI {
 
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
-		if (DYNServerMod.status == PlayerLevel.ADMIN) {
 			proxy.init();
-		}
 	}
 
 	@Mod.EventHandler
