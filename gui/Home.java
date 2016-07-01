@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.admin.AdminUI;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
@@ -47,7 +48,6 @@ public class Home extends Show {
 	private CheckBoxPictureButton freezeButton;
 	private PictureToggleButton muteButton;
 	private CheckBoxButton modeButton;
-	private TextLabel numberOfStudentsOnRoster;
 	private PictureToggleButton selfModeButton;
 
 	public Home() {
@@ -62,7 +62,7 @@ public class Home extends Show {
 		BooleanChangeListener listener = event -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
-				for (String student : DYNServerMod.usernames) {
+				for (String student : AdminUI.adminSubRoster) {
 					rosterDisplayList.add(new StringEntry(student));
 				}
 			}
@@ -72,14 +72,14 @@ public class Home extends Show {
 
 	// Manage Students
 	private void feedStudents() {
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			PacketDispatcher.sendToServer(new FeedPlayerMessage(student));
 		}
 	}
 
 	private void freezeUnfreezeStudents() {
 		isFrozen = !isFrozen;
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			if (isFrozen) {
 				admin.sendChatMessage("/p user " + student + " group add _FROZEN_");
 			} else {
@@ -104,7 +104,7 @@ public class Home extends Show {
 	}
 
 	private void healStudents() {
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			admin.sendChatMessage("/heal " + student);
 		}
 	}
@@ -115,7 +115,7 @@ public class Home extends Show {
 	}
 
 	private void muteUnmuteStudents() {
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			if (isMuted) {
 				admin.sendChatMessage("/mute " + student);
 			} else {
@@ -140,7 +140,7 @@ public class Home extends Show {
 	}
 
 	private void removeEffects() {
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student));
 		}
 	}
@@ -189,7 +189,7 @@ public class Home extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		// View roster list
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			rlist.add(new StringEntry(student));
 		}
 
@@ -197,11 +197,6 @@ public class Home extends Show {
 				rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
-
-		// TODO Change Total to actual total count of roster
-		numberOfStudentsOnRoster = new TextLabel((int) (width * .37), (int) (height * .4), 90, 20, Color.black,
-				DYNServerMod.usernames.size() + "/" + "Total", TextAlignment.LEFT);
-		registerComponent(numberOfStudentsOnRoster);
 
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
@@ -296,7 +291,7 @@ public class Home extends Show {
 	}
 
 	private void switchMode() {
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			admin.sendChatMessage("/gamemode " + (areStudentsInCreative ? "0 " : "1 ") + student);
 		}
 		areStudentsInCreative = !areStudentsInCreative;
@@ -318,7 +313,7 @@ public class Home extends Show {
 	private void teleportStudentsToMe() {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
-		for (String student : DYNServerMod.usernames) {
+		for (String student : AdminUI.adminSubRoster) {
 			admin.sendChatMessage("/tp " + student + " " + admin.getDisplayNameString());
 		}
 	}

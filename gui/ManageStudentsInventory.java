@@ -25,6 +25,7 @@ import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -115,10 +116,13 @@ public class ManageStudentsInventory extends Show {
 					ItemStack is = new ItemStack(i);
 					if (is.getDisplayName().contentEquals(itemBox.getText())) {
 						tItem = i;
+						itmSt = is;
 					}
 				}
 			}
 		}
+		System.out.println(tItem.getRegistryName());
+		System.out.println(itmSt.getDisplayName());
 		if (tItem == null) {
 			return;
 		}
@@ -126,12 +130,20 @@ public class ManageStudentsInventory extends Show {
 		if (itmSt != null) {
 			itemMod = " " + itmSt.getItemDamage();
 		}
-		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
+		int amt = 0;
+		try {
+			amt = Integer.parseInt(amountBox.getText());
+		} catch (NumberFormatException nfe) {
+			amt = 1;
+		}
 		admin.sendChatMessage("/give " + student + " " + tItem.getRegistryName() + " " + amt + " " + itemMod);
 	}
 
 	private void giveItemToPlayer() {
 		if (affectAllStudents) {
+			if (itemBox.getText().isEmpty()) {
+				return;
+			}
 			for (String student : DYNServerMod.usernames) {
 				giveItem(student);
 			}
@@ -205,6 +217,8 @@ public class ManageStudentsInventory extends Show {
 	@Override
 	public void setup() {
 		super.setup();
+
+		admin = Minecraft.getMinecraft().thePlayer;
 
 		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Student Inventory",
 				TextAlignment.CENTER));
