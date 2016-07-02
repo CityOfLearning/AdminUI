@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.names.manager.NamesManager;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.dyn.utils.BooleanChangeListener;

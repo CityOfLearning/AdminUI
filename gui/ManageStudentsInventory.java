@@ -121,8 +121,6 @@ public class ManageStudentsInventory extends Show {
 				}
 			}
 		}
-		System.out.println(tItem.getRegistryName());
-		System.out.println(itmSt.getDisplayName());
 		if (tItem == null) {
 			return;
 		}

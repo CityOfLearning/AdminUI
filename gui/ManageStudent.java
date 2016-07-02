@@ -95,7 +95,7 @@ public class ManageStudent extends Show {
 				admin.sendChatMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_");
 			}
 
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));			
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
 			if (isFrozen) {
 				freezeText = "UnFreeze Students";
 				List<String> text = freezeButton.getHoverText();
@@ -327,8 +327,10 @@ public class ManageStudent extends Show {
 				if (student.equals(selectedEntry.getTitle())) {
 
 					JsonObject info = DBManager.getInfoFromUserAccount(DBManager.getUserIDFromMCUsername(student));
-					dynUsername = info.get("username").getAsString();
-					dynPassword = info.get("password").getAsString();
+					if (info.has("username") && info.has("password")) {
+						dynUsername = info.get("username").getAsString();
+						dynPassword = info.get("password").getAsString();
+					}
 				}
 			}
 		} else {

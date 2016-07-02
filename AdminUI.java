@@ -3,14 +3,11 @@ package com.dyn.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dyn.DYNServerMod;
 import com.dyn.admin.proxy.Proxy;
 import com.dyn.admin.reference.MetaData;
 import com.dyn.admin.reference.Reference;
-import com.dyn.utils.PlayerLevel;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -29,7 +26,7 @@ public class AdminUI {
 
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
-			proxy.init();
+		proxy.init();
 	}
 
 	@Mod.EventHandler
