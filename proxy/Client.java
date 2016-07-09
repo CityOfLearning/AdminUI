@@ -7,7 +7,7 @@ import com.dyn.admin.gui.Home;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.dyn.utils.PlayerLevel;
-import com.rabbit.gui.GuiFoundation;
+import com.rabbit.gui.RabbitGui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
@@ -42,7 +42,7 @@ public class Client implements Proxy {
 			// check
 		if ((DYNServerMod.status == PlayerLevel.ADMIN) && adminKey.isPressed()) {
 			PacketDispatcher.sendToServer(new RequestUserlistMessage());
-			GuiFoundation.proxy.display(new Home());
+			RabbitGui.proxy.display(new Home());
 		}
 	}
 

@@ -154,7 +154,6 @@ public class MonitorAchievements extends Show {
 			for (ListEntry us : ulist) {
 				SelectStringEntry se = (SelectStringEntry) us;
 				infoDisplayList.add(se);
-				System.out.println(se.getTitle());
 			}
 		}
 	}

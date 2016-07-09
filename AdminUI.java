@@ -21,7 +21,7 @@ public class AdminUI {
 	@Mod.Instance(Reference.MOD_ID)
 	public static AdminUI instance;
 
-	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
+	@SidedProxy(modId = Reference.MOD_ID, clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static Proxy proxy;
 
 	@Mod.EventHandler
