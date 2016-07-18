@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dyn.DYNServerConstants;
+import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
 import com.dyn.server.database.DBManager;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
 import com.dyn.server.packets.server.RequestFreezePlayerMessage;
+import com.dyn.server.packets.server.RequestUserStatusMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.utils.BooleanChangeListener;
 import com.google.gson.JsonObject;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -66,6 +69,20 @@ public class ManageStudent extends Show {
 		isStudentInCreative = false;
 		dynUsername = "";
 		dynPassword = "";
+
+		BooleanChangeListener listener = event -> {
+			if (event.getDispatcher().getFlag()) {
+				isFrozen = DYNServerMod.playerStatus.get("frozen").getAsBoolean();
+				freezeButton.setToggle(isFrozen);
+				isMuted = DYNServerMod.playerStatus.get("muted").getAsBoolean();
+				muteButton.setToggle(isMuted);
+				isStudentInCreative = DYNServerMod.playerStatus.get("mode").getAsBoolean();
+				modeButton.setToggle(isStudentInCreative);
+			}
+		};
+
+		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener);
+
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -75,6 +92,7 @@ public class ManageStudent extends Show {
 				listEntry.setSelected(false);
 			}
 		}
+		PacketDispatcher.sendToServer(new RequestUserStatusMessage(selectedEntry.getTitle()));
 		usernameAndPassword();
 	}
 
@@ -122,7 +140,7 @@ public class ManageStudent extends Show {
 
 	private void muteUnmuteStudent() {
 		if (selectedEntry != null) {
-			if (isMuted) {
+			if (!isMuted) {
 				admin.sendChatMessage("/mute " + selectedEntry.getTitle());
 			} else {
 				admin.sendChatMessage("/unmute " + selectedEntry.getTitle());
@@ -327,7 +345,7 @@ public class ManageStudent extends Show {
 				if (student.equals(selectedEntry.getTitle())) {
 
 					JsonObject info = DBManager.getInfoFromUserAccount(DBManager.getUserIDFromMCUsername(student));
-					if (info.has("username") && info.has("password")) {
+					if ((info != null) && info.has("username") && info.has("password")) {
 						dynUsername = info.get("username").getAsString();
 						dynPassword = info.get("password").getAsString();
 					}

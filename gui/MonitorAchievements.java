@@ -69,81 +69,84 @@ public class MonitorAchievements extends Show {
 
 			if (ach.hasRequirementOfType(RequirementType.CRAFT)) {
 				ulist.add(new SelectStringEntry("-Craft-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.CRAFT)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
-			}
 
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.CRAFT)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
+			}
 			if (ach.hasRequirementOfType(RequirementType.SMELT)) {
 				ulist.add(new SelectStringEntry("-Smelt-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.SMELT)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
-			}
 
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.SMELT)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
+			}
 			if (ach.hasRequirementOfType(RequirementType.PICKUP)) {
 				ulist.add(new SelectStringEntry("-Pickup-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.PICKUP)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
-			}
 
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.PICKUP)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
+			}
 			if (ach.hasRequirementOfType(RequirementType.STAT)) {
 				ulist.add(new SelectStringEntry("-Special-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.STAT)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
-			}
 
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.STAT)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
+			}
 			if (ach.hasRequirementOfType(RequirementType.KILL)) {
 				ulist.add(new SelectStringEntry("-Kill-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.KILL)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
-			}
 
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.KILL)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
+			}
 			if (ach.hasRequirementOfType(RequirementType.BREW)) {
 				ulist.add(new SelectStringEntry("-Brew-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.BREW)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
-			}
 
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.BREW)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
+			}
 			if (ach.hasRequirementOfType(RequirementType.PLACE)) {
 				ulist.add(new SelectStringEntry("-Place-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.PLACE)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.PLACE)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
 			}
 			if (ach.hasRequirementOfType(RequirementType.BREAK)) {
 				ulist.add(new SelectStringEntry("-Break-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.BREAK)) {
-				ulist.add(new SelectStringEntry(
-						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.BREAK)) {
+					ulist.add(new SelectStringEntry(
+							r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
+				}
 			}
 			if (ach.hasRequirementOfType(RequirementType.LOCATION)) {
 				ulist.add(new SelectStringEntry("-Location-"));
-			}
-			for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
-					.getRequirementsByType(RequirementType.LOCATION)) {
-				ulist.add(new SelectStringEntry(
-						(r.getTotalAquired() > 0 ? "[X]-" : "[ ]-") + r.getRequirementEntityName()));
+
+				for (BaseRequirement r : DYNServerMod.userAchievementProgress.get(selectedAchievement.getTitle())
+						.getRequirementsByType(RequirementType.LOCATION)) {
+					ulist.add(new SelectStringEntry(
+							(r.getTotalAquired() > 0 ? "[X]-" : "[ ]-") + r.getRequirementEntityName()));
+				}
 			}
 			if (ach.hasRequirementOfType(RequirementType.MENTOR)) {
 				ulist.add(new SelectStringEntry("-Mentor-"));
