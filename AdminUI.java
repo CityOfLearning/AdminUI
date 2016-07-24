@@ -1,11 +1,14 @@
 package com.dyn.admin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.dyn.admin.proxy.Proxy;
 import com.dyn.admin.reference.MetaData;
 import com.dyn.admin.reference.Reference;
+import com.dyn.utils.BooleanListener;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -17,6 +20,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class AdminUI {
 
 	public static List<String> adminSubRoster = new ArrayList<String>();
+	public static List<String> groups = new ArrayList<String>();
+	public static BooleanListener groupsMessageRecieved = new BooleanListener(false);
+	public static List<String> worlds = new ArrayList<String>();
+	public static BooleanListener worldsMessageRecieved = new BooleanListener(false);
+	public static Map<Integer, String> zones = new HashMap<Integer, String>();
+	public static BooleanListener zonesMessageRecieved = new BooleanListener(false);
+	public static List<String> permissions = new ArrayList<String>();
+	public static BooleanListener permissionsMessageRecieved = new BooleanListener(false);
 
 	@Mod.Instance(Reference.MOD_ID)
 	public static AdminUI instance;
