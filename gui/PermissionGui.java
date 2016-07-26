@@ -1,10 +1,6 @@
 package com.dyn.admin.gui;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
 import com.dyn.DYNServerConstants;
-import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
 import com.dyn.mentor.gui.Home;
 import com.dyn.mentor.gui.ManageStudent;
@@ -17,14 +13,13 @@ import com.dyn.server.packets.server.RequestWorldListMessage;
 import com.dyn.server.packets.server.RequestWorldZonesMessage;
 import com.dyn.server.packets.server.RequestZonePermissionsMessage;
 import com.dyn.utils.BooleanChangeListener;
-import com.dyn.utils.CCOLPlayerInfo;
+import com.google.common.collect.Lists;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.DropDown;
 import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
-import com.rabbit.gui.component.list.entries.ListEntry;
 import com.rabbit.gui.component.list.entries.StringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
@@ -86,8 +81,12 @@ public class PermissionGui extends Show {
 			if (event.getDispatcher().getFlag()) {
 				permDisplayList.clear();
 				for (String perm : AdminUI.permissions) {
-					// String[] temp = perm.split(Pattern.quote("="));
-					permDisplayList.add(new StringEntry(perm));
+					if (perm.contains("#")) {
+						permDisplayList.add(new StringEntry(perm));
+					} else {
+						permDisplayList.add(new StringEntry(perm).setTextAlignment(TextAlignment.LEFT));
+					}
+
 				}
 				event.getDispatcher().setFlag(false);
 			}
@@ -117,31 +116,35 @@ public class PermissionGui extends Show {
 	public void setup() {
 		super.setup();
 
-		registerComponent(new TextLabel((int) (width * .15), (int) (height * .2), (int) (width / 3.3), 20, Color.black,
-				"Groups"));
+		// registerComponent(new TextLabel((int) (width * .15), (int) (height *
+		// .2), (int) (width / 3.3), 20, Color.black,
+		// "Groups"));
 
-		groups = new DropDown<String>((int) (width * .15), (int) (height * .25), (int) (width / 3.3), 20).setId("group")
-				.setItemSelectedListener((DropDown<String> dropdown, String selected) -> {
+		groups = new DropDown<String>((int) (width * .15), (int) (height * .2), (int) (width / 4.5), 15).setId("group")
+				.setDrawUnicode(true).setItemSelectedListener((DropDown<String> dropdown, String selected) -> {
 					dropdownSelected(dropdown, selected);
 				});
 
 		registerComponent(groups);
 
-		registerComponent(new TextLabel((int) (width * .15), (int) (height * .35), (int) (width / 3.3), 20, Color.black,
-				"Worlds"));
+		// registerComponent(new TextLabel((int) (width * .15), (int) (height *
+		// .35), (int) (width / 3.3), 20, Color.black,
+		// "Worlds"));
 
-		worlds = new DropDown<String>((int) (width * .15), (int) (height * .40), (int) (width / 3.3), 20).setId("world")
+		worlds = new DropDown<String>((int) (width * .3875), (int) (height * .2), (int) (width / 4.5), 15)
+				.setId("world").setDrawUnicode(true)
 				.setItemSelectedListener((DropDown<String> dropdown, String selected) -> {
 					dropdownSelected(dropdown, selected);
 				});
 
 		registerComponent(worlds);
 
-		registerComponent(
-				new TextLabel((int) (width * .15), (int) (height * .5), (int) (width / 3.3), 20, Color.black, "Zones"));
+		// registerComponent(
+		// new TextLabel((int) (width * .15), (int) (height * .5), (int) (width
+		// / 3.3), 20, Color.black, "Zones"));
 
-		zones = new DropDown<Integer>((int) (width * .15), (int) (height * .55), (int) (width / 3.3), 20).setId("zone")
-				.setItemSelectedListener((DropDown<Integer> dropdown, String selected) -> {
+		zones = new DropDown<Integer>((int) (width * .625), (int) (height * .2), (int) (width / 4.5), 15).setId("zone")
+				.setDrawUnicode(true).setItemSelectedListener((DropDown<Integer> dropdown, String selected) -> {
 					dropdownSelected(dropdown, selected);
 				});
 
@@ -150,15 +153,8 @@ public class PermissionGui extends Show {
 		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Permission Visualization",
 				TextAlignment.CENTER));
 
-		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
-
-		for (CCOLPlayerInfo user : DYNServerMod.roster) {
-			rlist.add(new StringEntry(user.getCCOLName()));
-		}
-
-		permDisplayList = new ScrollableDisplayList((int) (width * .475), (int) (height * .25), (int) (width / 2.75),
-				150, 15, rlist);
+		permDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .3), (int) (width / 1.45), 150,
+				15, Lists.newArrayList());
 		permDisplayList.setId("roster");
 		registerComponent(permDisplayList);
 
