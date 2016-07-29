@@ -80,12 +80,6 @@ public class Home extends Show {
 	private void freezeUnfreezeStudents() {
 		isFrozen = !isFrozen;
 		for (String student : AdminUI.adminSubRoster) {
-			if (isFrozen) {
-				admin.sendChatMessage("/p user " + student + " group add _FROZEN_");
-			} else {
-				admin.sendChatMessage("/p user " + student + " group remove _FROZEN_");
-			}
-
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, isFrozen));
 		}
 		if (isFrozen) {
