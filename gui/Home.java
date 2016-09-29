@@ -12,7 +12,9 @@ import com.dyn.server.packets.server.FeedPlayerMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
 import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.server.packets.server.ServerCommandMessage;
 import com.dyn.utils.BooleanChangeListener;
+import com.dyn.utils.PlayerLevel;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBoxButton;
@@ -38,17 +40,17 @@ public class Home extends Show {
 
 	private EntityPlayerSP admin;
 	private boolean isCreative;
+	private boolean isAdmin;
 	private boolean isFrozen;
 	private boolean isMuted;
 	private boolean areStudentsInCreative;
 	private ScrollableDisplayList rosterDisplayList;
 	private String freezeText;
-	private String muteText;
-	private String modeText;
 	private CheckBoxPictureButton freezeButton;
 	private PictureToggleButton muteButton;
 	private CheckBoxButton modeButton;
 	private PictureToggleButton selfModeButton;
+	private PictureToggleButton selfLevelButton;
 
 	public Home() {
 		setBackground(new DefaultBackground());
@@ -56,8 +58,6 @@ public class Home extends Show {
 		isFrozen = false;
 		areStudentsInCreative = false;
 		freezeText = "Freeze Students";
-		muteText = "Mute Students";
-		modeText = "Creative Mode";
 
 		BooleanChangeListener listener = event -> {
 			if (event.getDispatcher().getFlag()) {
@@ -119,16 +119,14 @@ public class Home extends Show {
 
 		isMuted = !isMuted;
 		if (isMuted) {
-			muteText = "UnMute Students";
 			List<String> text = muteButton.getHoverText();
 			text.clear();
-			text.add(muteText);
+			text.add("UnMute Students");
 			muteButton.setHoverText(text);
 		} else {
-			muteText = "Mute Students";
 			List<String> text = muteButton.getHoverText();
 			text.clear();
-			text.add(muteText);
+			text.add("Mute Students");
 			muteButton.setHoverText(text);
 		}
 	}
@@ -214,13 +212,13 @@ public class Home extends Show {
 
 		muteButton = new PictureToggleButton((int) (width * .55), (int) (height * .485), 50, 25,
 				DYNServerConstants.UNMUTE_IMAGE, DYNServerConstants.MUTE_IMAGE, true);
-		muteButton.setIsEnabled(true).addHoverText(muteText).doesDrawHoverText(true)
+		muteButton.setIsEnabled(true).addHoverText("Mute Students").doesDrawHoverText(true)
 				.setClickListener(but -> muteUnmuteStudents());
 		registerComponent(muteButton);
 
 		modeButton = new CheckBoxButton((int) (width * .55), (int) (height * .62), (int) (width / 3.3), 20,
 				"   Toggle Creative", false);
-		modeButton.setIsEnabled(true).addHoverText(modeText).doesDrawHoverText(true)
+		modeButton.setIsEnabled(true).addHoverText("Creative Mode").doesDrawHoverText(true)
 				.setClickListener(but -> switchMode());
 		registerComponent(modeButton);
 
@@ -240,6 +238,14 @@ public class Home extends Show {
 								.addHoverText(
 										isCreative ? "Set your gamemode to Survival" : "Set your gamemode to Creative")
 								.doesDrawHoverText(true).setClickListener(but -> toggleCreative()));
+
+		registerComponent(selfLevelButton = (PictureToggleButton) new PictureToggleButton((int) ((width * .15) + 27),
+				(int) ((height * .2) + 7), 18, 18, DYNServerConstants.STU_IMAGE, DYNServerConstants.ADMIN_IMAGE,
+				DYNServerMod.status == PlayerLevel.ADMIN)
+						.setIsEnabled(true)
+						.addHoverText(DYNServerMod.status == PlayerLevel.ADMIN ? "Set your level to Student"
+								: "Set your level to Admin")
+						.doesDrawHoverText(true).setClickListener(but -> toggleLevel()));
 
 		// time of day
 
@@ -290,16 +296,14 @@ public class Home extends Show {
 		}
 		areStudentsInCreative = !areStudentsInCreative;
 		if (areStudentsInCreative) {
-			modeText = "Survival Mode";
 			List<String> text = modeButton.getHoverText();
 			text.clear();
-			text.add(modeText);
+			text.add("Survival Mode");
 			modeButton.setHoverText(text);
 		} else {
-			modeText = "Creative Mode";
 			List<String> text = modeButton.getHoverText();
 			text.clear();
-			text.add(modeText);
+			text.add("Creative Mode");
 			modeButton.setHoverText(text);
 		}
 	}
@@ -316,17 +320,43 @@ public class Home extends Show {
 		admin.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
 		isCreative = !isCreative;
 		if (isCreative) {
-			modeText = "Set your gamemode to Survival";
-			List<String> text = modeButton.getHoverText();
+			List<String> text = selfModeButton.getHoverText();
 			text.clear();
-			text.add(modeText);
+			text.add("Set your gamemode to Survival");
 			selfModeButton.setHoverText(text);
 		} else {
-			modeText = "Set your gamemode to Creative";
-			List<String> text = modeButton.getHoverText();
+			List<String> text = selfModeButton.getHoverText();
 			text.clear();
-			text.add(modeText);
+			text.add("Set your gamemode to Creative");
 			selfModeButton.setHoverText(text);
+		}
+	}
+
+	private void toggleLevel() {
+
+		isAdmin = !isAdmin;
+		if (isAdmin) {
+			List<String> text = selfLevelButton.getHoverText();
+			text.clear();
+			text.add("Set your level to Admin");
+			selfLevelButton.setHoverText(text);
+			DYNServerMod.status = PlayerLevel.STUDENT;
+			PacketDispatcher.sendToServer(new ServerCommandMessage("/deop " + admin.getDisplayNameString()));
+			PacketDispatcher.sendToServer(
+					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _OPS_"));
+			PacketDispatcher.sendToServer(
+					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _STUDENTS_"));
+		} else {
+			List<String> text = selfLevelButton.getHoverText();
+			text.clear();
+			text.add("Set your level to Student");
+			selfLevelButton.setHoverText(text);
+			DYNServerMod.status = PlayerLevel.ADMIN;
+			PacketDispatcher.sendToServer(new ServerCommandMessage("/op " + admin.getDisplayNameString()));
+			PacketDispatcher.sendToServer(
+					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _OPS_"));
+			PacketDispatcher.sendToServer(
+					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _STUDENTS_"));
 		}
 	}
 }
