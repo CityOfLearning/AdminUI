@@ -1,5 +1,8 @@
 package com.dyn.admin.proxy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.lwjgl.input.Keyboard;
 
 import com.dyn.DYNServerMod;
@@ -22,6 +25,13 @@ public class Client implements Proxy {
 	private KeyBinding adminKey;
 
 	@Override
+	public Map<String, ?> getKeyBindings() {
+		Map<String, KeyBinding> keys = new HashMap();
+		keys.put("admin", adminKey);
+		return keys;
+	}
+
+	@Override
 	public void init() {
 		if (DYNServerMod.status == PlayerLevel.ADMIN) {
 
@@ -38,10 +48,11 @@ public class Client implements Proxy {
 
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
-		} // realistically this will only occur if an admin but lets do sanity
-			// check
-		if ((DYNServerMod.status == PlayerLevel.ADMIN) && adminKey.isPressed()) {
-			PacketDispatcher.sendToServer(new RequestUserlistMessage());
+		}
+		if (adminKey.isPressed()) {
+			if (!Minecraft.getMinecraft().thePlayer.worldObj.isRemote) {
+				PacketDispatcher.sendToServer(new RequestUserlistMessage());
+			}
 			RabbitGui.proxy.display(new Home());
 		}
 	}
