@@ -7,8 +7,9 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.mentor.gui.SideButtons;
+import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -218,36 +219,10 @@ public class ManageStudentsInventory extends Show {
 
 		admin = Minecraft.getMinecraft().thePlayer;
 
+		SideButtons.init(this, 4);
+
 		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Student Inventory",
 				TextAlignment.CENTER));
-
-		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
-				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
-				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
-				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
-				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(false).addHoverText("Manage Inventory")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
-				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		// get all the items in the registry
 		FMLControlledNamespacedRegistry<Block> blockRegistry = GameData.getBlockRegistry();
@@ -333,7 +308,7 @@ public class ManageStudentsInventory extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .175), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		userBox = new TextBox((int) (width * .235), (int) (height * .725), width / 4, 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));

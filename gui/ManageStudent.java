@@ -7,13 +7,14 @@ import java.util.List;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
+import com.dyn.mentor.gui.SideButtons;
 import com.dyn.server.database.DBManager;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.FeedPlayerMessage;
-import com.dyn.server.packets.server.RemoveEffectsMessage;
-import com.dyn.server.packets.server.RequestFreezePlayerMessage;
-import com.dyn.server.packets.server.RequestUserStatusMessage;
-import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.packets.server.FeedPlayerMessage;
+import com.dyn.server.network.packets.server.RemoveEffectsMessage;
+import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
+import com.dyn.server.network.packets.server.RequestUserStatusMessage;
+import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.google.gson.JsonObject;
 import com.rabbit.gui.background.DefaultBackground;
@@ -92,14 +93,14 @@ public class ManageStudent extends Show {
 				listEntry.setSelected(false);
 			}
 		}
-		PacketDispatcher.sendToServer(new RequestUserStatusMessage(selectedEntry.getTitle()));
+		NetworkDispatcher.sendToServer(new RequestUserStatusMessage(selectedEntry.getTitle()));
 		usernameAndPassword();
 	}
 
 	private void feedStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				PacketDispatcher.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle()));
+				NetworkDispatcher.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle()));
 			}
 		}
 	}
@@ -107,7 +108,7 @@ public class ManageStudent extends Show {
 	private void freezeUnfreezeStudent() {
 		if (selectedEntry != null) {
 			isFrozen = !isFrozen;
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
+			NetworkDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
 			if (isFrozen) {
 				freezeText = "UnFreeze Student";
 				List<String> text = freezeButton.getHoverText();
@@ -163,6 +164,8 @@ public class ManageStudent extends Show {
 
 		admin = Minecraft.getMinecraft().thePlayer;
 
+		SideButtons.init(this, 3);
+
 		for (String s : AdminUI.adminSubRoster) {
 			userlist.add(s);
 		}
@@ -195,39 +198,11 @@ public class ManageStudent extends Show {
 		userDisplayList.setId("roster");
 		registerComponent(userDisplayList);
 
-		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
-				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
-				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
-				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(false).addHoverText("Manage a Student")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
-				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
-				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new MonitorAchievements())));
-
 		// GUI main section
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
@@ -269,7 +244,7 @@ public class ManageStudent extends Show {
 						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-								PacketDispatcher.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
+								NetworkDispatcher.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
 							}
 						}));
 

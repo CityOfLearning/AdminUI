@@ -7,12 +7,13 @@ import java.util.List;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.FeedPlayerMessage;
-import com.dyn.server.packets.server.RemoveEffectsMessage;
-import com.dyn.server.packets.server.RequestFreezePlayerMessage;
-import com.dyn.server.packets.server.RequestUserlistMessage;
-import com.dyn.server.packets.server.ServerCommandMessage;
+import com.dyn.mentor.gui.SideButtons;
+import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.packets.server.FeedPlayerMessage;
+import com.dyn.server.network.packets.server.RemoveEffectsMessage;
+import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
+import com.dyn.server.network.packets.server.RequestUserlistMessage;
+import com.dyn.server.network.packets.server.ServerCommandMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.dyn.utils.PlayerLevel;
 import com.rabbit.gui.background.DefaultBackground;
@@ -73,14 +74,14 @@ public class Home extends Show {
 	// Manage Students
 	private void feedStudents() {
 		for (String student : AdminUI.adminSubRoster) {
-			PacketDispatcher.sendToServer(new FeedPlayerMessage(student));
+			NetworkDispatcher.sendToServer(new FeedPlayerMessage(student));
 		}
 	}
 
 	private void freezeUnfreezeStudents() {
 		isFrozen = !isFrozen;
 		for (String student : AdminUI.adminSubRoster) {
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, isFrozen));
+			NetworkDispatcher.sendToServer(new RequestFreezePlayerMessage(student, isFrozen));
 		}
 		if (isFrozen) {
 			freezeText = "UnFreeze Students";
@@ -133,7 +134,7 @@ public class Home extends Show {
 
 	private void removeEffects() {
 		for (String student : AdminUI.adminSubRoster) {
-			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student));
+			NetworkDispatcher.sendToServer(new RemoveEffectsMessage(student));
 		}
 	}
 
@@ -147,33 +148,7 @@ public class Home extends Show {
 		registerComponent(
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Classroom", TextAlignment.CENTER));
 
-		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
-				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(false).addHoverText("Manage Classroom")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
-				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
-				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
-				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
-				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new MonitorAchievements())));
+		SideButtons.init(this, 1);
 
 		// gui main area
 
@@ -193,7 +168,7 @@ public class Home extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		// Manage Students
 		registerComponent(new Button((int) (width * .55), (int) (height * .72), (int) (width / 3.3), 20,
@@ -241,9 +216,9 @@ public class Home extends Show {
 
 		registerComponent(selfLevelButton = (PictureToggleButton) new PictureToggleButton((int) ((width * .15) + 27),
 				(int) ((height * .2) + 7), 18, 18, DYNServerConstants.STU_IMAGE, DYNServerConstants.ADMIN_IMAGE,
-				DYNServerMod.status == PlayerLevel.ADMIN)
+				DYNServerMod.accessLevel == PlayerLevel.ADMIN)
 						.setIsEnabled(true)
-						.addHoverText(DYNServerMod.status == PlayerLevel.ADMIN ? "Set your level to Student"
+						.addHoverText(DYNServerMod.accessLevel == PlayerLevel.ADMIN ? "Set your level to Student"
 								: "Set your level to Admin")
 						.doesDrawHoverText(true).setClickListener(but -> toggleLevel()));
 
@@ -340,22 +315,22 @@ public class Home extends Show {
 			text.clear();
 			text.add("Set your level to Admin");
 			selfLevelButton.setHoverText(text);
-			DYNServerMod.status = PlayerLevel.STUDENT;
-			PacketDispatcher.sendToServer(new ServerCommandMessage("/deop " + admin.getDisplayNameString()));
-			PacketDispatcher.sendToServer(
+			DYNServerMod.accessLevel = PlayerLevel.STUDENT;
+			NetworkDispatcher.sendToServer(new ServerCommandMessage("/deop " + admin.getDisplayNameString()));
+			NetworkDispatcher.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _OPS_"));
-			PacketDispatcher.sendToServer(
+			NetworkDispatcher.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _STUDENTS_"));
 		} else {
 			List<String> text = selfLevelButton.getHoverText();
 			text.clear();
 			text.add("Set your level to Student");
 			selfLevelButton.setHoverText(text);
-			DYNServerMod.status = PlayerLevel.ADMIN;
-			PacketDispatcher.sendToServer(new ServerCommandMessage("/op " + admin.getDisplayNameString()));
-			PacketDispatcher.sendToServer(
+			DYNServerMod.accessLevel = PlayerLevel.ADMIN;
+			NetworkDispatcher.sendToServer(new ServerCommandMessage("/op " + admin.getDisplayNameString()));
+			NetworkDispatcher.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _OPS_"));
-			PacketDispatcher.sendToServer(
+			NetworkDispatcher.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _STUDENTS_"));
 		}
 	}

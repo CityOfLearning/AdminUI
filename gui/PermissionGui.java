@@ -1,18 +1,19 @@
 package com.dyn.admin.gui;
 
 import com.dyn.DYNServerConstants;
+import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.RequestGroupListMessage;
-import com.dyn.server.packets.server.RequestGroupPermissionsMessage;
-import com.dyn.server.packets.server.RequestWorldListMessage;
-import com.dyn.server.packets.server.RequestWorldZonesMessage;
-import com.dyn.server.packets.server.RequestZonePermissionsMessage;
+import com.dyn.mentor.gui.SideButtons;
+import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.packets.server.RequestGroupListMessage;
+import com.dyn.server.network.packets.server.RequestGroupPermissionsMessage;
+import com.dyn.server.network.packets.server.RequestWorldListMessage;
+import com.dyn.server.network.packets.server.RequestWorldZonesMessage;
+import com.dyn.server.network.packets.server.RequestZonePermissionsMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.google.common.collect.Lists;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.DropDown;
-import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
@@ -34,8 +35,8 @@ public class PermissionGui extends Show {
 		setBackground(new DefaultBackground());
 		title = "Permission Management";
 
-		PacketDispatcher.sendToServer(new RequestWorldListMessage());
-		PacketDispatcher.sendToServer(new RequestGroupListMessage());
+		NetworkDispatcher.sendToServer(new RequestWorldListMessage());
+		NetworkDispatcher.sendToServer(new RequestGroupListMessage());
 
 		BooleanChangeListener grouplistener = event -> {
 			if (event.getDispatcher().getFlag()) {
@@ -52,14 +53,14 @@ public class PermissionGui extends Show {
 		BooleanChangeListener worldlistener = event -> {
 			if (event.getDispatcher().getFlag()) {
 				worlds.clear();
-				for (String group : AdminUI.worlds) {
+				for (String group : DYNServerMod.worlds.values()) {
 					worlds.add(group);
 				}
 				event.getDispatcher().setFlag(false);
 			}
 		};
 
-		AdminUI.worldsMessageRecieved.addBooleanChangeListener(worldlistener);
+		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener);
 
 		BooleanChangeListener zonelistener = event -> {
 			if (event.getDispatcher().getFlag()) {
@@ -96,14 +97,14 @@ public class PermissionGui extends Show {
 		System.out.println("Drop Down Selected " + dropdown.getId());
 		if (dropdown.getId().equals("group")) {
 			group = selected;
-			PacketDispatcher.sendToServer(new RequestGroupPermissionsMessage(group));
+			NetworkDispatcher.sendToServer(new RequestGroupPermissionsMessage(group));
 		} else if (dropdown.getId().equals("world")) {
 			world = selected;
-			PacketDispatcher.sendToServer(new RequestWorldZonesMessage(world));
+			NetworkDispatcher.sendToServer(new RequestWorldZonesMessage(world));
 		} else if (dropdown.getId().equals("zone")) {
 			zone = (int) dropdown.getSelectedElement().getValue();
 			System.out.println("Requesting Zone Perms");
-			PacketDispatcher.sendToServer(new RequestZonePermissionsMessage(zone));
+			NetworkDispatcher.sendToServer(new RequestZonePermissionsMessage(zone));
 		}
 
 	}
@@ -111,6 +112,8 @@ public class PermissionGui extends Show {
 	@Override
 	public void setup() {
 		super.setup();
+
+		SideButtons.init(this, 6);
 
 		// registerComponent(new TextLabel((int) (width * .15), (int) (height *
 		// .2), (int) (width / 3.3), 20, Color.black,
@@ -153,34 +156,6 @@ public class PermissionGui extends Show {
 				15, Lists.newArrayList());
 		permDisplayList.setId("roster");
 		registerComponent(permDisplayList);
-
-		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
-				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
-				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(false).addHoverText("Student Rosters")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new PermissionGui())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
-				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
-				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
-				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
