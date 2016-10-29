@@ -7,8 +7,8 @@ import org.lwjgl.input.Keyboard;
 
 import com.dyn.DYNServerMod;
 import com.dyn.admin.gui.Home;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.PlayerLevel;
 import com.rabbit.gui.RabbitGui;
 
@@ -33,7 +33,7 @@ public class Client implements Proxy {
 
 	@Override
 	public void init() {
-		if (DYNServerMod.status == PlayerLevel.ADMIN) {
+		if (DYNServerMod.accessLevel == PlayerLevel.ADMIN) {
 
 			MinecraftForge.EVENT_BUS.register(this);
 
@@ -51,7 +51,7 @@ public class Client implements Proxy {
 		}
 		if (adminKey.isPressed()) {
 			if (!Minecraft.getMinecraft().thePlayer.worldObj.isRemote) {
-				PacketDispatcher.sendToServer(new RequestUserlistMessage());
+				NetworkDispatcher.sendToServer(new RequestUserlistMessage());
 			}
 			RabbitGui.proxy.display(new Home());
 		}

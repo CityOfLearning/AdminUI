@@ -22,8 +22,6 @@ public class AdminUI {
 	public static List<String> adminSubRoster = new ArrayList<String>();
 	public static List<String> groups = new ArrayList<String>();
 	public static BooleanListener groupsMessageRecieved = new BooleanListener(false);
-	public static List<String> worlds = new ArrayList<String>();
-	public static BooleanListener worldsMessageRecieved = new BooleanListener(false);
 	public static Map<Integer, String> zones = new HashMap<Integer, String>();
 	public static BooleanListener zonesMessageRecieved = new BooleanListener(false);
 	public static List<String> permissions = new ArrayList<String>();
