@@ -7,8 +7,7 @@ import java.util.List;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.mentor.gui.SideButtons;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
 import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
@@ -60,7 +59,7 @@ public class Home extends Show {
 		areStudentsInCreative = false;
 		freezeText = "Freeze Students";
 
-		BooleanChangeListener listener = event -> {
+		BooleanChangeListener listener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
 				for (String student : AdminUI.adminSubRoster) {
@@ -68,20 +67,25 @@ public class Home extends Show {
 				}
 			}
 		};
-		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener);
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
 	}
 
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
+	}
+	
 	// Manage Students
 	private void feedStudents() {
 		for (String student : AdminUI.adminSubRoster) {
-			NetworkDispatcher.sendToServer(new FeedPlayerMessage(student));
+			NetworkManager.sendToServer(new FeedPlayerMessage(student));
 		}
 	}
 
 	private void freezeUnfreezeStudents() {
 		isFrozen = !isFrozen;
 		for (String student : AdminUI.adminSubRoster) {
-			NetworkDispatcher.sendToServer(new RequestFreezePlayerMessage(student, isFrozen));
+			NetworkManager.sendToServer(new RequestFreezePlayerMessage(student, isFrozen));
 		}
 		if (isFrozen) {
 			freezeText = "UnFreeze Students";
@@ -134,7 +138,7 @@ public class Home extends Show {
 
 	private void removeEffects() {
 		for (String student : AdminUI.adminSubRoster) {
-			NetworkDispatcher.sendToServer(new RemoveEffectsMessage(student));
+			NetworkManager.sendToServer(new RemoveEffectsMessage(student));
 		}
 	}
 
@@ -168,7 +172,7 @@ public class Home extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		// Manage Students
 		registerComponent(new Button((int) (width * .55), (int) (height * .72), (int) (width / 3.3), 20,
@@ -316,10 +320,10 @@ public class Home extends Show {
 			text.add("Set your level to Admin");
 			selfLevelButton.setHoverText(text);
 			DYNServerMod.accessLevel = PlayerLevel.STUDENT;
-			NetworkDispatcher.sendToServer(new ServerCommandMessage("/deop " + admin.getDisplayNameString()));
-			NetworkDispatcher.sendToServer(
+			NetworkManager.sendToServer(new ServerCommandMessage("/deop " + admin.getDisplayNameString()));
+			NetworkManager.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _OPS_"));
-			NetworkDispatcher.sendToServer(
+			NetworkManager.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _STUDENTS_"));
 		} else {
 			List<String> text = selfLevelButton.getHoverText();
@@ -327,10 +331,10 @@ public class Home extends Show {
 			text.add("Set your level to Student");
 			selfLevelButton.setHoverText(text);
 			DYNServerMod.accessLevel = PlayerLevel.ADMIN;
-			NetworkDispatcher.sendToServer(new ServerCommandMessage("/op " + admin.getDisplayNameString()));
-			NetworkDispatcher.sendToServer(
+			NetworkManager.sendToServer(new ServerCommandMessage("/op " + admin.getDisplayNameString()));
+			NetworkManager.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _OPS_"));
-			NetworkDispatcher.sendToServer(
+			NetworkManager.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _STUDENTS_"));
 		}
 	}

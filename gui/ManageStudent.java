@@ -7,9 +7,8 @@ import java.util.List;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.mentor.gui.SideButtons;
 import com.dyn.server.database.DBManager;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
 import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
@@ -71,7 +70,7 @@ public class ManageStudent extends Show {
 		dynUsername = "";
 		dynPassword = "";
 
-		BooleanChangeListener listener = event -> {
+		BooleanChangeListener listener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				isFrozen = DYNServerMod.playerStatus.get("frozen").getAsBoolean();
 				freezeButton.setToggle(isFrozen);
@@ -82,8 +81,12 @@ public class ManageStudent extends Show {
 			}
 		};
 
-		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener);
-
+		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener, this);
+	}
+	
+	@Override
+	public void onClose() {
+		DYNServerMod.playerStatusReturned.removeBooleanChangeListener(this);
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -93,14 +96,14 @@ public class ManageStudent extends Show {
 				listEntry.setSelected(false);
 			}
 		}
-		NetworkDispatcher.sendToServer(new RequestUserStatusMessage(selectedEntry.getTitle()));
+		NetworkManager.sendToServer(new RequestUserStatusMessage(selectedEntry.getTitle()));
 		usernameAndPassword();
 	}
 
 	private void feedStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				NetworkDispatcher.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle()));
+				NetworkManager.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle()));
 			}
 		}
 	}
@@ -108,7 +111,7 @@ public class ManageStudent extends Show {
 	private void freezeUnfreezeStudent() {
 		if (selectedEntry != null) {
 			isFrozen = !isFrozen;
-			NetworkDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
+			NetworkManager.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
 			if (isFrozen) {
 				freezeText = "UnFreeze Student";
 				List<String> text = freezeButton.getHoverText();
@@ -202,7 +205,7 @@ public class ManageStudent extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
@@ -244,7 +247,7 @@ public class ManageStudent extends Show {
 						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-								NetworkDispatcher.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
+								NetworkManager.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
 							}
 						}));
 

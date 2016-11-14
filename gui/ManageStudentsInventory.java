@@ -7,8 +7,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.mentor.gui.SideButtons;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.rabbit.gui.background.DefaultBackground;
@@ -50,7 +49,7 @@ public class ManageStudentsInventory extends Show {
 		title = "Admin Gui";
 		affectAllStudents = false;
 
-		BooleanChangeListener listener = event -> {
+		BooleanChangeListener listener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				userDisplayList.clear();
 				for (String student : DYNServerMod.usernames) {
@@ -58,7 +57,12 @@ public class ManageStudentsInventory extends Show {
 				}
 			}
 		};
-		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener);
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
+	}
+	
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	private void checkBoxChanged() {
@@ -308,7 +312,7 @@ public class ManageStudentsInventory extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .175), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		userBox = new TextBox((int) (width * .235), (int) (height * .725), width / 4, 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));

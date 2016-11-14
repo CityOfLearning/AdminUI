@@ -3,8 +3,8 @@ package com.dyn.admin.gui;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.mentor.gui.SideButtons;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.ServerMod;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestGroupListMessage;
 import com.dyn.server.network.packets.server.RequestGroupPermissionsMessage;
 import com.dyn.server.network.packets.server.RequestWorldListMessage;
@@ -27,6 +27,10 @@ public class PermissionGui extends Show {
 	private DropDown<String> worlds;
 	private DropDown<Integer> zones;
 	private ScrollableDisplayList permDisplayList;
+	private BooleanChangeListener grouplistener;
+	private BooleanChangeListener worldlistener;
+	private BooleanChangeListener zonelistener;
+	private BooleanChangeListener permissionlistener;
 
 	String group, world;
 	int zone;
@@ -35,61 +39,17 @@ public class PermissionGui extends Show {
 		setBackground(new DefaultBackground());
 		title = "Permission Management";
 
-		NetworkDispatcher.sendToServer(new RequestWorldListMessage());
-		NetworkDispatcher.sendToServer(new RequestGroupListMessage());
+		NetworkManager.sendToServer(new RequestWorldListMessage());
+		NetworkManager.sendToServer(new RequestGroupListMessage());
+	}
 
-		BooleanChangeListener grouplistener = event -> {
-			if (event.getDispatcher().getFlag()) {
-				groups.clear();
-				for (String group : AdminUI.groups) {
-					groups.add(group);
-				}
-				event.getDispatcher().setFlag(false);
-			}
-		};
-
-		AdminUI.groupsMessageRecieved.addBooleanChangeListener(grouplistener);
-
-		BooleanChangeListener worldlistener = event -> {
-			if (event.getDispatcher().getFlag()) {
-				worlds.clear();
-				for (String group : DYNServerMod.worlds.values()) {
-					worlds.add(group);
-				}
-				event.getDispatcher().setFlag(false);
-			}
-		};
-
-		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener);
-
-		BooleanChangeListener zonelistener = event -> {
-			if (event.getDispatcher().getFlag()) {
-				zones.clear();
-				for (Integer group : AdminUI.zones.keySet()) {
-					zones.add(AdminUI.zones.get(group), group);
-				}
-				event.getDispatcher().setFlag(false);
-			}
-		};
-
-		AdminUI.zonesMessageRecieved.addBooleanChangeListener(zonelistener);
-
-		BooleanChangeListener permissionlistener = event -> {
-			if (event.getDispatcher().getFlag()) {
-				permDisplayList.clear();
-				for (String perm : AdminUI.permissions) {
-					if (perm.contains("#")) {
-						permDisplayList.add(new StringEntry(perm));
-					} else {
-						permDisplayList.add(new StringEntry(perm).setTextAlignment(TextAlignment.LEFT));
-					}
-
-				}
-				event.getDispatcher().setFlag(false);
-			}
-		};
-
-		AdminUI.permissionsMessageRecieved.addBooleanChangeListener(permissionlistener);
+	@Override
+	public void onClose() {
+//		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
+		AdminUI.groupsMessageRecieved.removeBooleanChangeListener(grouplistener);
+		DYNServerMod.worldsMessageRecieved.removeBooleanChangeListener(worldlistener);
+		AdminUI.zonesMessageRecieved.removeBooleanChangeListener(zonelistener);
+		AdminUI.permissionsMessageRecieved.removeBooleanChangeListener(permissionlistener);
 	}
 
 	private void dropdownSelected(DropDown dropdown, String selected) {
@@ -97,14 +57,14 @@ public class PermissionGui extends Show {
 		System.out.println("Drop Down Selected " + dropdown.getId());
 		if (dropdown.getId().equals("group")) {
 			group = selected;
-			NetworkDispatcher.sendToServer(new RequestGroupPermissionsMessage(group));
+			NetworkManager.sendToServer(new RequestGroupPermissionsMessage(group));
 		} else if (dropdown.getId().equals("world")) {
 			world = selected;
-			NetworkDispatcher.sendToServer(new RequestWorldZonesMessage(world));
+			NetworkManager.sendToServer(new RequestWorldZonesMessage(world));
 		} else if (dropdown.getId().equals("zone")) {
 			zone = (int) dropdown.getSelectedElement().getValue();
 			System.out.println("Requesting Zone Perms");
-			NetworkDispatcher.sendToServer(new RequestZonePermissionsMessage(zone));
+			NetworkManager.sendToServer(new RequestZonePermissionsMessage(zone));
 		}
 
 	}
@@ -160,5 +120,78 @@ public class PermissionGui extends Show {
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				DYNServerConstants.BG1_IMAGE));
+
+		grouplistener = (event, show) -> {
+			if (event.getDispatcher().getFlag()) {
+				System.out.println(show);
+				((PermissionGui) show).updateGroups();
+				event.getDispatcher().setFlag(false);
+			}
+		};
+
+		AdminUI.groupsMessageRecieved.addBooleanChangeListener(grouplistener, this);
+
+		worldlistener = (event, show) -> {
+			if (event.getDispatcher().getFlag()) {
+				System.out.println(show);
+				((PermissionGui) show).updateWorlds();
+				event.getDispatcher().setFlag(false);
+			}
+		};
+
+		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener, this);
+
+		zonelistener = (event, show) -> {
+			if (event.getDispatcher().getFlag()) {
+				((PermissionGui) show).updateZones();
+				event.getDispatcher().setFlag(false);
+			}
+		};
+
+		AdminUI.zonesMessageRecieved.addBooleanChangeListener(zonelistener, this);
+
+		permissionlistener = (event, show) -> {
+			if (event.getDispatcher().getFlag()) {
+				((PermissionGui) show).updatePermissions();
+				event.getDispatcher().setFlag(false);
+			}
+		};
+
+		AdminUI.permissionsMessageRecieved.addBooleanChangeListener(permissionlistener, this);
+		
+		System.out.println(this);
+	}
+
+	public void updateGroups() {
+		groups.clear();
+		for (String group : AdminUI.groups) {
+			groups.add(group);
+		}
+	}
+
+	public void updateWorlds() {
+		worlds.clear();
+		for (String group : DYNServerMod.worlds.values()) {
+			worlds.add(group);
+		}
+	}
+
+	public void updateZones() {
+		zones.clear();
+		for (Integer group : AdminUI.zones.keySet()) {
+			zones.add(AdminUI.zones.get(group), group);
+		}
+	}
+
+	public void updatePermissions() {
+		permDisplayList.clear();
+		for (String perm : AdminUI.permissions) {
+			if (perm.contains("#")) {
+				permDisplayList.add(new StringEntry(perm));
+			} else {
+				permDisplayList.add(new StringEntry(perm).setTextAlignment(TextAlignment.LEFT));
+			}
+
+		}
 	}
 }

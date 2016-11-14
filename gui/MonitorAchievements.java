@@ -9,8 +9,7 @@ import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.achievement.RequirementType;
 import com.dyn.achievements.achievement.Requirements.BaseRequirement;
 import com.dyn.achievements.handlers.AchievementManager;
-import com.dyn.mentor.gui.SideButtons;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.MentorGivingAchievementMessage;
 import com.dyn.server.network.packets.server.RequestUserAchievementsProgressMessage;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
@@ -40,7 +39,7 @@ public class MonitorAchievements extends Show {
 		setBackground(new DefaultBackground());
 		title = "Admin Gui";
 
-		BooleanChangeListener listener = event -> {
+		BooleanChangeListener listener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				userDisplayList.clear();
 				for (String student : DYNServerMod.usernames) {
@@ -48,7 +47,12 @@ public class MonitorAchievements extends Show {
 				}
 			}
 		};
-		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener);
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
+	}
+	
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -61,7 +65,7 @@ public class MonitorAchievements extends Show {
 			selectedAchievement = entry;
 		} else if (list.getId() == "roster") {
 			selectedUser = entry;
-			NetworkDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(selectedUser.getTitle()));
+			NetworkManager.sendToServer(new RequestUserAchievementsProgressMessage(selectedUser.getTitle()));
 		}
 
 		if ((selectedUser != null) && (selectedAchievement != null)) {
@@ -174,7 +178,7 @@ public class MonitorAchievements extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .2), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		registerComponent(new TextBox((int) (width * .235), (int) (height * .2), width / 4, 20, "Search for User")
 				.setId("usersearch")
@@ -213,7 +217,7 @@ public class MonitorAchievements extends Show {
 				.setClickListener(but -> {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
-						NetworkDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle(),
+						NetworkManager.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle(),
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));
