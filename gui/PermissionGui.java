@@ -3,7 +3,6 @@ package com.dyn.admin.gui;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
-import com.dyn.server.ServerMod;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestGroupListMessage;
 import com.dyn.server.network.packets.server.RequestGroupPermissionsMessage;
@@ -43,15 +42,6 @@ public class PermissionGui extends Show {
 		NetworkManager.sendToServer(new RequestGroupListMessage());
 	}
 
-	@Override
-	public void onClose() {
-//		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
-		AdminUI.groupsMessageRecieved.removeBooleanChangeListener(grouplistener);
-		DYNServerMod.worldsMessageRecieved.removeBooleanChangeListener(worldlistener);
-		AdminUI.zonesMessageRecieved.removeBooleanChangeListener(zonelistener);
-		AdminUI.permissionsMessageRecieved.removeBooleanChangeListener(permissionlistener);
-	}
-
 	private void dropdownSelected(DropDown dropdown, String selected) {
 		// this will determine the permission view
 		System.out.println("Drop Down Selected " + dropdown.getId());
@@ -67,6 +57,15 @@ public class PermissionGui extends Show {
 			NetworkManager.sendToServer(new RequestZonePermissionsMessage(zone));
 		}
 
+	}
+
+	@Override
+	public void onClose() {
+		// DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
+		AdminUI.groupsMessageRecieved.removeBooleanChangeListener(grouplistener);
+		DYNServerMod.worldsMessageRecieved.removeBooleanChangeListener(worldlistener);
+		AdminUI.zonesMessageRecieved.removeBooleanChangeListener(zonelistener);
+		AdminUI.permissionsMessageRecieved.removeBooleanChangeListener(permissionlistener);
 	}
 
 	@Override
@@ -158,7 +157,7 @@ public class PermissionGui extends Show {
 		};
 
 		AdminUI.permissionsMessageRecieved.addBooleanChangeListener(permissionlistener, this);
-		
+
 		System.out.println(this);
 	}
 
@@ -166,6 +165,18 @@ public class PermissionGui extends Show {
 		groups.clear();
 		for (String group : AdminUI.groups) {
 			groups.add(group);
+		}
+	}
+
+	public void updatePermissions() {
+		permDisplayList.clear();
+		for (String perm : AdminUI.permissions) {
+			if (perm.contains("#")) {
+				permDisplayList.add(new StringEntry(perm));
+			} else {
+				permDisplayList.add(new StringEntry(perm).setTextAlignment(TextAlignment.LEFT));
+			}
+
 		}
 	}
 
@@ -180,18 +191,6 @@ public class PermissionGui extends Show {
 		zones.clear();
 		for (Integer group : AdminUI.zones.keySet()) {
 			zones.add(AdminUI.zones.get(group), group);
-		}
-	}
-
-	public void updatePermissions() {
-		permDisplayList.clear();
-		for (String perm : AdminUI.permissions) {
-			if (perm.contains("#")) {
-				permDisplayList.add(new StringEntry(perm));
-			} else {
-				permDisplayList.add(new StringEntry(perm).setTextAlignment(TextAlignment.LEFT));
-			}
-
 		}
 	}
 }

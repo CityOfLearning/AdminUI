@@ -32,22 +32,17 @@ public class Roster extends Show {
 	private ScrollableDisplayList rosterDisplayList;
 	private ArrayList<String> userlist = new ArrayList<String>();
 	TextLabel numberOfStudentsOnRoster;
-	
+
 	private BooleanChangeListener rosterlistener;
 
 	public Roster() {
 		setBackground(new DefaultBackground());
 		title = "Admin Gui Roster Management";
-		
-		//its possible there arent any users but lets refresh anyways
-		if(DYNServerMod.usernames.size() == 0){
+
+		// its possible there arent any users but lets refresh anyways
+		if (DYNServerMod.usernames.size() == 0) {
 			NetworkManager.sendToServer(new RequestUserlistMessage());
 		}
-	}
-	
-	@Override
-	public void onClose() {
-		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(rosterlistener);
 	}
 
 	private void addToRoster() {
@@ -66,6 +61,11 @@ public class Roster extends Show {
 		selectedEntry = entry;
 		selectedList = list;
 
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(rosterlistener);
 	}
 
 	private void removeFromRoster() {
@@ -143,32 +143,22 @@ public class Roster extends Show {
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
-		numberOfStudentsOnRoster = new TextLabel((int) (width * .5) + 20, (int) (height * .2), 90, 20,
-				Color.black, "Roster Count: " + AdminUI.adminSubRoster.size(),TextAlignment.LEFT);
+		numberOfStudentsOnRoster = new TextLabel((int) (width * .5) + 20, (int) (height * .2), 90, 20, Color.black,
+				"Roster Count: " + AdminUI.adminSubRoster.size(), TextAlignment.LEFT);
 		registerComponent(numberOfStudentsOnRoster);
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				DYNServerConstants.BG1_IMAGE));
-		
+
 		rosterlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				((Roster) show).updateRoster();
 				event.getDispatcher().setFlag(false);
 			}
 		};
-		
+
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
-	}
-	
-	public void updateRoster(){
-		userDisplayList.clear();
-		for (String s : DYNServerMod.usernames) {
-			if (!AdminUI.adminSubRoster.contains(s)
-					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
-				userDisplayList.add(new SelectStringEntry(s));
-			}
-		}
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {
@@ -187,6 +177,16 @@ public class Roster extends Show {
 					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
+			}
+		}
+	}
+
+	public void updateRoster() {
+		userDisplayList.clear();
+		for (String s : DYNServerMod.usernames) {
+			if (!AdminUI.adminSubRoster.contains(s)
+					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+				userDisplayList.add(new SelectStringEntry(s));
 			}
 		}
 	}

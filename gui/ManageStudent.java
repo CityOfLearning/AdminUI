@@ -83,11 +83,6 @@ public class ManageStudent extends Show {
 
 		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener, this);
 	}
-	
-	@Override
-	public void onClose() {
-		DYNServerMod.playerStatusReturned.removeBooleanChangeListener(this);
-	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		selectedEntry = entry;
@@ -159,6 +154,11 @@ public class ManageStudent extends Show {
 				muteButton.setHoverText(text);
 			}
 		}
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.playerStatusReturned.removeBooleanChangeListener(this);
 	}
 
 	@Override

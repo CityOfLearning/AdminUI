@@ -59,11 +59,6 @@ public class ManageStudentsInventory extends Show {
 		};
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
 	}
-	
-	@Override
-	public void onClose() {
-		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
-	}
 
 	private void checkBoxChanged() {
 		affectAllStudents = !affectAllStudents;
@@ -158,6 +153,11 @@ public class ManageStudentsInventory extends Show {
 			}
 			giveItem(userBox.getText());
 		}
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	private void removeItem(String student) {

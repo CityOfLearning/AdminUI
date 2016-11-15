@@ -11,7 +11,6 @@ import com.dyn.server.network.packets.bidirectional.MentorRequstScriptMessage;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.server.network.packets.server.StopServerPythonScriptMessage;
 import com.dyn.utils.BooleanChangeListener;
-import com.dyn.utils.CCOLPlayerInfo;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.code.CodeInterface;
 import com.rabbit.gui.component.control.Button;
@@ -34,7 +33,7 @@ public class Scripts extends Show {
 	private ScrollableDisplayList rosterDisplayList;
 
 	private CodeInterface codeWindow;
-	
+
 	private BooleanChangeListener scriptlistener;
 	private BooleanChangeListener rosterlistener;
 
@@ -43,18 +42,17 @@ public class Scripts extends Show {
 		title = "Roster Script Management";
 	}
 
-	
+	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
+		selectedEntry = (SelectElementEntry) entry;
+		NetworkManager.sendToServer(new MentorRequstScriptMessage("_",
+				Minecraft.getMinecraft().theWorld.getPlayerEntityByName((String) entry.getValue()).getEntityId()));
+	}
+
 	@Override
 	public void onClose() {
 		DYNServerMod.studentScriptMessageRecieved.removeBooleanChangeListener(scriptlistener);
 		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(rosterlistener);
 		super.onClose();
-	}
-	
-	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
-		selectedEntry = (SelectElementEntry) entry;
-		NetworkManager.sendToServer(new MentorRequstScriptMessage("_",
-				Minecraft.getMinecraft().theWorld.getPlayerEntityByName((String) entry.getValue()).getEntityId()));
 	}
 
 	@Override
@@ -124,7 +122,7 @@ public class Scripts extends Show {
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				DYNServerConstants.BG1_IMAGE));
-		
+
 		scriptlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				((Scripts) show).updateCodeWindowText(DYNServerMod.studentSctipt);
@@ -140,12 +138,12 @@ public class Scripts extends Show {
 		};
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
-	
-	public void updateCodeWindowText(String script){
+
+	public void updateCodeWindowText(String script) {
 		codeWindow.setText(script);
 	}
-	
-	public void updateRoster(){
+
+	public void updateRoster() {
 		rosterDisplayList.clear();
 		for (String student : AdminUI.adminSubRoster) {
 			rosterDisplayList.add(new StringEntry(student));

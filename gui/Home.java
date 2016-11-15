@@ -70,11 +70,6 @@ public class Home extends Show {
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
 	}
 
-	@Override
-	public void onClose() {
-		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
-	}
-	
 	// Manage Students
 	private void feedStudents() {
 		for (String student : AdminUI.adminSubRoster) {
@@ -134,6 +129,11 @@ public class Home extends Show {
 			text.add("Mute Students");
 			muteButton.setHoverText(text);
 		}
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	private void removeEffects() {

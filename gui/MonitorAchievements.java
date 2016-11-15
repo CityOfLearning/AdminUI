@@ -49,11 +49,6 @@ public class MonitorAchievements extends Show {
 		};
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
 	}
-	
-	@Override
-	public void onClose() {
-		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
-	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		for (ListEntry listEntry : list.getContent()) {
@@ -164,6 +159,11 @@ public class MonitorAchievements extends Show {
 				infoDisplayList.add(se);
 			}
 		}
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	@Override
