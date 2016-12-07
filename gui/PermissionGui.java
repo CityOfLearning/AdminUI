@@ -44,7 +44,6 @@ public class PermissionGui extends Show {
 
 	private void dropdownSelected(DropDown dropdown, String selected) {
 		// this will determine the permission view
-		System.out.println("Drop Down Selected " + dropdown.getId());
 		if (dropdown.getId().equals("group")) {
 			group = selected;
 			NetworkManager.sendToServer(new RequestGroupPermissionsMessage(group));
@@ -53,7 +52,6 @@ public class PermissionGui extends Show {
 			NetworkManager.sendToServer(new RequestWorldZonesMessage(world));
 		} else if (dropdown.getId().equals("zone")) {
 			zone = (int) dropdown.getSelectedElement().getValue();
-			System.out.println("Requesting Zone Perms");
 			NetworkManager.sendToServer(new RequestZonePermissionsMessage(zone));
 		}
 
@@ -122,7 +120,6 @@ public class PermissionGui extends Show {
 
 		grouplistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
-				System.out.println(show);
 				((PermissionGui) show).updateGroups();
 				event.getDispatcher().setFlag(false);
 			}
@@ -132,7 +129,6 @@ public class PermissionGui extends Show {
 
 		worldlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
-				System.out.println(show);
 				((PermissionGui) show).updateWorlds();
 				event.getDispatcher().setFlag(false);
 			}
@@ -157,8 +153,6 @@ public class PermissionGui extends Show {
 		};
 
 		AdminUI.permissionsMessageRecieved.addBooleanChangeListener(permissionlistener, this);
-
-		System.out.println(this);
 	}
 
 	public void updateGroups() {
