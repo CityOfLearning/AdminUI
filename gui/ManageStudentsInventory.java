@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.server.ServerMod;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.BooleanChangeListener;
@@ -77,7 +78,9 @@ public class ManageStudentsInventory extends Show {
 		// Clear all students inventory
 		if (affectAllStudents) {
 			for (String student : DYNServerMod.usernames) {
-				admin.sendChatMessage("/clear " + student);
+				ServerMod.proxy.addScheduledTask(() -> {
+					admin.sendChatMessage("/clear " + student);
+				});
 			}
 		} else if (!userBox.getText().isEmpty()) {
 			admin.sendChatMessage("/clear " + userBox.getText());

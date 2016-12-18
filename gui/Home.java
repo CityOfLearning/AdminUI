@@ -7,6 +7,7 @@ import java.util.List;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
+import com.dyn.server.ServerMod;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
@@ -99,7 +100,9 @@ public class Home extends Show {
 
 	private void healStudents() {
 		for (String student : AdminUI.adminSubRoster) {
-			admin.sendChatMessage("/heal " + student);
+			ServerMod.proxy.addScheduledTask(() -> {
+				admin.sendChatMessage("/heal " + student);
+			});
 		}
 	}
 
@@ -110,11 +113,13 @@ public class Home extends Show {
 
 	private void muteUnmuteStudents() {
 		for (String student : AdminUI.adminSubRoster) {
-			if (isMuted) {
-				admin.sendChatMessage("/mute " + student);
-			} else {
-				admin.sendChatMessage("/unmute " + student);
-			}
+			ServerMod.proxy.addScheduledTask(() -> {
+				if (isMuted) {
+					admin.sendChatMessage("/mute " + student);
+				} else {
+					admin.sendChatMessage("/unmute " + student);
+				}
+			});
 		}
 
 		isMuted = !isMuted;
@@ -138,7 +143,9 @@ public class Home extends Show {
 
 	private void removeEffects() {
 		for (String student : AdminUI.adminSubRoster) {
-			NetworkManager.sendToServer(new RemoveEffectsMessage(student));
+			ServerMod.proxy.addScheduledTask(() -> {
+				NetworkManager.sendToServer(new RemoveEffectsMessage(student));
+			});
 		}
 	}
 
@@ -270,9 +277,13 @@ public class Home extends Show {
 	}
 
 	private void switchMode() {
+
 		for (String student : AdminUI.adminSubRoster) {
-			admin.sendChatMessage("/gamemode " + (areStudentsInCreative ? "0 " : "1 ") + student);
+			ServerMod.proxy.addScheduledTask(() -> {
+				admin.sendChatMessage("/gamemode " + (areStudentsInCreative ? "0 " : "1 ") + student);
+			});
 		}
+
 		areStudentsInCreative = !areStudentsInCreative;
 		if (areStudentsInCreative) {
 			List<String> text = modeButton.getHoverText();
@@ -291,8 +302,11 @@ public class Home extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : AdminUI.adminSubRoster) {
-			admin.sendChatMessage("/tp " + student + " " + admin.getDisplayNameString());
+			ServerMod.proxy.addScheduledTask(() -> {
+				admin.sendChatMessage("/tp " + student + " " + admin.getDisplayNameString());
+			});
 		}
+
 	}
 
 	private void toggleCreative() {
