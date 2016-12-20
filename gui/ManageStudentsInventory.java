@@ -37,7 +37,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 public class ManageStudentsInventory extends Show {
 	private ScrollableDisplayList itemDisplayList;
 	private ScrollableDisplayList userDisplayList;
-	private ArrayList<Item> itemList = new ArrayList<Item>();
+	private ArrayList<Item> itemList = new ArrayList<>();
 	private TextBox userBox;
 	private TextBox itemBox;
 	private TextBox amountBox;
@@ -107,7 +107,7 @@ public class ManageStudentsInventory extends Show {
 		for (Item i : itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
-					List<ItemStack> subItem = new ArrayList<ItemStack>();
+					List<ItemStack> subItem = new ArrayList<>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
 						if (is.getDisplayName().contentEquals(itemBox.getText())) {
@@ -169,7 +169,7 @@ public class ManageStudentsInventory extends Show {
 		for (Item i : itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
-					List<ItemStack> subItem = new ArrayList<ItemStack>();
+					List<ItemStack> subItem = new ArrayList<>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
 						if (is.getDisplayName().contentEquals(itemBox.getText())) {
@@ -235,7 +235,7 @@ public class ManageStudentsInventory extends Show {
 		FMLControlledNamespacedRegistry<Block> blockRegistry = GameData.getBlockRegistry();
 		Iterator<?> iterator = blockRegistry.iterator();
 
-		List<Item> blockList = new ArrayList<Item>();
+		List<Item> blockList = new ArrayList<>();
 
 		while (iterator.hasNext()) {
 			Block blocks = (Block) iterator.next();
@@ -245,7 +245,7 @@ public class ManageStudentsInventory extends Show {
 		FMLControlledNamespacedRegistry<Item> itemRegistry = GameData.getItemRegistry();
 		iterator = itemRegistry.iterator();
 
-		List<Item> itemsList = new ArrayList<Item>();
+		List<Item> itemsList = new ArrayList<>();
 
 		while (iterator.hasNext()) {
 			Item items = (Item) iterator.next();
@@ -266,12 +266,12 @@ public class ManageStudentsInventory extends Show {
 
 		itemList.remove(null);
 
-		ArrayList<ListEntry> dslist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> dslist = new ArrayList<>();
 
 		for (Item i : itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
-					List<ItemStack> subItem = new ArrayList<ItemStack>();
+					List<ItemStack> subItem = new ArrayList<>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
 						dslist.add(
@@ -300,7 +300,7 @@ public class ManageStudentsInventory extends Show {
 		registerComponent(itemDisplayList);
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (String s : DYNServerMod.usernames) {
 			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
@@ -358,7 +358,7 @@ public class ManageStudentsInventory extends Show {
 			for (Item i : itemList) {
 				if (i != null) {
 					if (i.getHasSubtypes()) {
-						List<ItemStack> subItem = new ArrayList<ItemStack>();
+						List<ItemStack> subItem = new ArrayList<>();
 						i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 						for (ItemStack is : subItem) {
 							if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {

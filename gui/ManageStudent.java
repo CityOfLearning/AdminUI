@@ -41,7 +41,7 @@ public class ManageStudent extends Show {
 	private EntityPlayerSP admin;
 	private SelectStringEntry selectedEntry;
 	private ScrollableDisplayList userDisplayList;
-	private ArrayList<String> userlist = new ArrayList<String>();
+	private ArrayList<String> userlist = new ArrayList<>();
 
 	private boolean isFrozen;
 	private boolean isMuted;
@@ -177,7 +177,7 @@ public class ManageStudent extends Show {
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage a Student", TextAlignment.CENTER));
 
 		// The students not on the Roster List for this class
-		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> ulist = new ArrayList<>();
 
 		for (String s : userlist) {
 			ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
@@ -189,7 +189,7 @@ public class ManageStudent extends Show {
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (String s : AdminUI.adminSubRoster) {
 			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,

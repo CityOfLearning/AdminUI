@@ -164,7 +164,7 @@ public class Home extends Show {
 		// gui main area
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		// View roster list
 		for (String student : AdminUI.adminSubRoster) {

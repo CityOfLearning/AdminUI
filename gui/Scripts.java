@@ -61,7 +61,7 @@ public class Scripts extends Show {
 		SideButtons.init(this, 7);
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (String student : AdminUI.adminSubRoster) {
 			if (DYNServerMod.usernames.contains(student)) {

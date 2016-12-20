@@ -30,7 +30,7 @@ public class Roster extends Show {
 	private DisplayList selectedList;
 	private ScrollableDisplayList userDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
-	private ArrayList<String> userlist = new ArrayList<String>();
+	private ArrayList<String> userlist = new ArrayList<>();
 	TextLabel numberOfStudentsOnRoster;
 
 	private BooleanChangeListener rosterlistener;
@@ -97,7 +97,7 @@ public class Roster extends Show {
 				TextAlignment.CENTER));
 
 		// The students not on the Roster List for this class
-		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> ulist = new ArrayList<>();
 
 		for (String s : userlist) {
 			ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
@@ -119,7 +119,7 @@ public class Roster extends Show {
 		registerComponent(userDisplayList);
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (String student : AdminUI.adminSubRoster) {
 			rlist.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,

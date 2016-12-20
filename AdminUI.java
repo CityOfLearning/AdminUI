@@ -19,12 +19,12 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "required-after:dyn|server")
 public class AdminUI {
 
-	public static List<String> adminSubRoster = new ArrayList<String>();
-	public static List<String> groups = new ArrayList<String>();
+	public static List<String> adminSubRoster = new ArrayList<>();
+	public static List<String> groups = new ArrayList<>();
 	public static BooleanListener groupsMessageRecieved = new BooleanListener(false);
-	public static Map<Integer, String> zones = new HashMap<Integer, String>();
+	public static Map<Integer, String> zones = new HashMap<>();
 	public static BooleanListener zonesMessageRecieved = new BooleanListener(false);
-	public static List<String> permissions = new ArrayList<String>();
+	public static List<String> permissions = new ArrayList<>();
 	public static BooleanListener permissionsMessageRecieved = new BooleanListener(false);
 
 	@Mod.Instance(Reference.MOD_ID)
