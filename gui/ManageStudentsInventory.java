@@ -314,7 +314,7 @@ public class ManageStudentsInventory extends Show {
 
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .175), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+						.addHoverText("Refresh").setDoesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		userBox = new TextBox((int) (width * .235), (int) (height * .725), width / 4, 20, "User").setId("user")
@@ -334,18 +334,19 @@ public class ManageStudentsInventory extends Show {
 
 		checkButton = new Button((int) (width * .175) - 10, (int) (height * .825), 50, 20, "Look");
 		checkButton.addHoverText("Look at inventory").setClickListener(but -> checkStudentInventory())
-				.doesDrawHoverText(true);
+				.setDoesDrawHoverText(true);
 		registerComponent(checkButton);
 
 		registerComponent(new Button((int) (width * .314) - 10, (int) (height * .825), 50, 20, "Clear")
 				.setClickListener(but -> clearPlayerInventory()).addHoverText("Clear Inventory")
-				.doesDrawHoverText(true));
+				.setDoesDrawHoverText(true));
 
 		registerComponent(new Button((int) (width * .6) - 10, (int) (height * .825), 50, 20, "Give")
-				.addHoverText("Give Item").doesDrawHoverText(true).setClickListener(but -> giveItemToPlayer()));
+				.addHoverText("Give Item").setDoesDrawHoverText(true).setClickListener(but -> giveItemToPlayer()));
 
 		registerComponent(new Button((int) (width * .739) - 10, (int) (height * .825), 50, 20, "Remove")
-				.setClickListener(but -> removeItemFromPlayer()).addHoverText("Remove Item").doesDrawHoverText(true));
+				.setClickListener(but -> removeItemFromPlayer()).addHoverText("Remove Item")
+				.setDoesDrawHoverText(true));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),

@@ -178,7 +178,7 @@ public class Home extends Show {
 
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+						.addHoverText("Refresh").setDoesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		// Manage Students
@@ -187,35 +187,36 @@ public class Home extends Show {
 
 		registerComponent(
 				new Button((int) (width * .55), (int) (height * .82), (int) (width / 3.3), 20, "Remove Effects")
-						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
+						.addHoverText("Removes effects like poison and invisibility").setDoesDrawHoverText(true)
 						.setClickListener(but -> removeEffects()));
 
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .37), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
-		freezeButton.setIsEnabled(true).addHoverText(freezeText).doesDrawHoverText(true)
+		freezeButton.setIsEnabled(true).addHoverText(freezeText).setDoesDrawHoverText(true)
 				.setClickListener(but -> freezeUnfreezeStudents());
 		registerComponent(freezeButton);
 
 		muteButton = new PictureToggleButton((int) (width * .55), (int) (height * .485), 50, 25,
 				DYNServerConstants.UNMUTE_IMAGE, DYNServerConstants.MUTE_IMAGE, true);
-		muteButton.setIsEnabled(true).addHoverText("Mute Students").doesDrawHoverText(true)
+		muteButton.setIsEnabled(true).addHoverText("Mute Students").setDoesDrawHoverText(true)
 				.setClickListener(but -> muteUnmuteStudents());
 		registerComponent(muteButton);
 
 		modeButton = new CheckBoxButton((int) (width * .55), (int) (height * .62), (int) (width / 3.3), 20,
 				"   Toggle Creative", false);
-		modeButton.setIsEnabled(true).addHoverText("Creative Mode").doesDrawHoverText(true)
+		modeButton.setIsEnabled(true).addHoverText("Creative Mode").setDoesDrawHoverText(true)
 				.setClickListener(but -> switchMode());
 		registerComponent(modeButton);
 
 		registerComponent(
 				new PictureButton((int) (width * .7), (int) (height * .37), 50, 25, DYNServerConstants.HEART_IMAGE)
-						.setIsEnabled(true).addHoverText("Heal Students").doesDrawHoverText(true)
+						.setIsEnabled(true).addHoverText("Heal Students").setDoesDrawHoverText(true)
 						.setClickListener(but -> healStudents()));
 
 		registerComponent(new PictureButton((int) (width * .7), (int) (height * .485), 50, 25,
 				new ResourceLocation("minecraft", "textures/items/chicken_cooked.png")).setIsEnabled(true)
-						.addHoverText("Feed Students").doesDrawHoverText(true).setClickListener(but -> feedStudents()));
+						.addHoverText("Feed Students").setDoesDrawHoverText(true)
+						.setClickListener(but -> feedStudents()));
 
 		registerComponent(
 				selfModeButton = (PictureToggleButton) new PictureToggleButton((int) (width * .15), (int) (height * .2),
@@ -223,7 +224,7 @@ public class Home extends Show {
 								.setIsEnabled(true)
 								.addHoverText(
 										isCreative ? "Set your gamemode to Survival" : "Set your gamemode to Creative")
-								.doesDrawHoverText(true).setClickListener(but -> toggleCreative()));
+								.setDoesDrawHoverText(true).setClickListener(but -> toggleCreative()));
 
 		registerComponent(selfLevelButton = (PictureToggleButton) new PictureToggleButton((int) ((width * .15) + 27),
 				(int) ((height * .2) + 7), 18, 18, DYNServerConstants.STU_IMAGE, DYNServerConstants.ADMIN_IMAGE,
@@ -231,7 +232,7 @@ public class Home extends Show {
 						.setIsEnabled(true)
 						.addHoverText(DYNServerMod.accessLevel == PlayerLevel.ADMIN ? "Set your level to Student"
 								: "Set your level to Admin")
-						.doesDrawHoverText(true).setClickListener(but -> toggleLevel()));
+						.setDoesDrawHoverText(true).setClickListener(but -> toggleLevel()));
 
 		// time of day
 

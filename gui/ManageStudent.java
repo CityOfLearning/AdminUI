@@ -204,35 +204,36 @@ public class ManageStudent extends Show {
 		// GUI main section
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+						.addHoverText("Refresh").setDoesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
-		freezeButton.setIsEnabled(true).addHoverText(freezeText).doesDrawHoverText(true)
+		freezeButton.setIsEnabled(true).addHoverText(freezeText).setDoesDrawHoverText(true)
 				.setClickListener(but -> freezeUnfreezeStudent());
 		registerComponent(freezeButton);
 
 		muteButton = new PictureToggleButton((int) (width * .55), (int) (height * .365), 50, 25,
 				DYNServerConstants.UNMUTE_IMAGE, DYNServerConstants.MUTE_IMAGE, false);
-		muteButton.setIsEnabled(true).addHoverText(muteText).doesDrawHoverText(true)
+		muteButton.setIsEnabled(true).addHoverText(muteText).setDoesDrawHoverText(true)
 				.setClickListener(but -> muteUnmuteStudent());
 		registerComponent(muteButton);
 
 		modeButton = new CheckBoxButton((int) (width * .55), (int) (height * .5), (int) (width / 3.3), 20,
 				"Toggle Creative", false);
-		modeButton.setIsEnabled(true).addHoverText(modeText).doesDrawHoverText(true)
+		modeButton.setIsEnabled(true).addHoverText(modeText).setDoesDrawHoverText(true)
 				.setClickListener(but -> switchMode());
 		registerComponent(modeButton);
 
 		registerComponent(
 				new PictureButton((int) (width * .7), (int) (height * .25), 50, 25, DYNServerConstants.HEART_IMAGE)
-						.setIsEnabled(true).addHoverText("Heal Students").doesDrawHoverText(true)
+						.setIsEnabled(true).addHoverText("Heal Students").setDoesDrawHoverText(true)
 						.setClickListener(but -> healStudent()));
 
 		registerComponent(new PictureButton((int) (width * .7), (int) (height * .365), 50, 25,
 				new ResourceLocation("minecraft", "textures/items/chicken_cooked.png")).setIsEnabled(true)
-						.addHoverText("Feed Students").doesDrawHoverText(true).setClickListener(but -> feedStudent()));
+						.addHoverText("Feed Students").setDoesDrawHoverText(true)
+						.setClickListener(but -> feedStudent()));
 
 		registerComponent(
 				new Button((int) (width * .55), (int) (height * .6), (int) (width / 3.3), 20, "Teleport to Student")
@@ -244,7 +245,7 @@ public class ManageStudent extends Show {
 
 		registerComponent(
 				new Button((int) (width * .55), (int) (height * .8), (int) (width / 3.3), 20, "Remove Effects")
-						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
+						.addHoverText("Removes effects like poison and invisibility").setDoesDrawHoverText(true)
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
 								NetworkManager.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
