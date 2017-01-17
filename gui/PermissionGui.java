@@ -1,5 +1,7 @@
 package com.dyn.admin.gui;
 
+import java.util.Map.Entry;
+
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
@@ -23,7 +25,7 @@ import com.rabbit.gui.show.Show;
 public class PermissionGui extends Show {
 
 	private DropDown<String> groups;
-	private DropDown<String> worlds;
+	private DropDown<Integer> worlds;
 	private DropDown<Integer> zones;
 	private ScrollableDisplayList permDisplayList;
 	private BooleanChangeListener grouplistener;
@@ -46,20 +48,24 @@ public class PermissionGui extends Show {
 		// this will determine the permission view
 		if (dropdown.getId().equals("group")) {
 			group = selected;
-			NetworkManager.sendToServer(new RequestGroupPermissionsMessage(group));
+			NetworkManager.sendToServer(new RequestGroupPermissionsMessage(group.trim()));
 		} else if (dropdown.getId().equals("world")) {
 			world = selected;
-			NetworkManager.sendToServer(new RequestWorldZonesMessage(world));
+			NetworkManager
+					.sendToServer(new RequestWorldZonesMessage((int) dropdown.getSelectedElement().getValue(), false));
 		} else if (dropdown.getId().equals("zone")) {
 			zone = (int) dropdown.getSelectedElement().getValue();
-			NetworkManager.sendToServer(new RequestZonePermissionsMessage(zone));
+			if (group != null) {
+				NetworkManager.sendToServer(new RequestZonePermissionsMessage(zone, group));
+			} else {
+				NetworkManager.sendToServer(new RequestZonePermissionsMessage(zone));
+			}
 		}
 
 	}
 
 	@Override
 	public void onClose() {
-		// DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 		AdminUI.groupsMessageRecieved.removeBooleanChangeListener(grouplistener);
 		DYNServerMod.worldsMessageRecieved.removeBooleanChangeListener(worldlistener);
 		AdminUI.zonesMessageRecieved.removeBooleanChangeListener(zonelistener);
@@ -87,9 +93,9 @@ public class PermissionGui extends Show {
 		// .35), (int) (width / 3.3), 20, Color.black,
 		// "Worlds"));
 
-		worlds = new DropDown<String>((int) (width * .3875), (int) (height * .2), (int) (width / 4.5), 15)
+		worlds = new DropDown<Integer>((int) (width * .3875), (int) (height * .2), (int) (width / 4.5), 15)
 				.setId("world").setDrawUnicode(true)
-				.setItemSelectedListener((DropDown<String> dropdown, String selected) -> {
+				.setItemSelectedListener((DropDown<Integer> dropdown, String selected) -> {
 					dropdownSelected(dropdown, selected);
 				});
 
@@ -125,6 +131,7 @@ public class PermissionGui extends Show {
 			}
 		};
 
+		AdminUI.groupsMessageRecieved.setFlag(false);
 		AdminUI.groupsMessageRecieved.addBooleanChangeListener(grouplistener, this);
 
 		worldlistener = (event, show) -> {
@@ -134,6 +141,7 @@ public class PermissionGui extends Show {
 			}
 		};
 
+		DYNServerMod.worldsMessageRecieved.setFlag(false);
 		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener, this);
 
 		zonelistener = (event, show) -> {
@@ -143,6 +151,7 @@ public class PermissionGui extends Show {
 			}
 		};
 
+		AdminUI.zonesMessageRecieved.setFlag(false);
 		AdminUI.zonesMessageRecieved.addBooleanChangeListener(zonelistener, this);
 
 		permissionlistener = (event, show) -> {
@@ -152,6 +161,7 @@ public class PermissionGui extends Show {
 			}
 		};
 
+		AdminUI.permissionsMessageRecieved.setFlag(false);
 		AdminUI.permissionsMessageRecieved.addBooleanChangeListener(permissionlistener, this);
 	}
 
@@ -165,7 +175,7 @@ public class PermissionGui extends Show {
 	public void updatePermissions() {
 		permDisplayList.clear();
 		for (String perm : AdminUI.permissions) {
-			if (perm.contains("#")) {
+			if (perm.contains("#") || perm.contains(":")) {
 				permDisplayList.add(new StringEntry(perm));
 			} else {
 				permDisplayList.add(new StringEntry(perm).setTextAlignment(TextAlignment.LEFT));
@@ -176,8 +186,8 @@ public class PermissionGui extends Show {
 
 	public void updateWorlds() {
 		worlds.clear();
-		for (String group : DYNServerMod.worlds.values()) {
-			worlds.add(group);
+		for (Entry<Integer, String> world : DYNServerMod.worlds.entrySet()) {
+			worlds.add(world.getValue(), world.getKey());
 		}
 	}
 
