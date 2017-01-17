@@ -15,7 +15,7 @@ import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.server.network.packets.server.ServerCommandMessage;
 import com.dyn.utils.BooleanChangeListener;
-import com.dyn.utils.PlayerLevel;
+import com.dyn.utils.PlayerAccessLevel;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBoxButton;
@@ -228,9 +228,9 @@ public class Home extends Show {
 
 		registerComponent(selfLevelButton = (PictureToggleButton) new PictureToggleButton((int) ((width * .15) + 27),
 				(int) ((height * .2) + 7), 18, 18, DYNServerConstants.STU_IMAGE, DYNServerConstants.ADMIN_IMAGE,
-				DYNServerMod.accessLevel == PlayerLevel.ADMIN)
+				DYNServerMod.accessLevel == PlayerAccessLevel.ADMIN)
 						.setIsEnabled(true)
-						.addHoverText(DYNServerMod.accessLevel == PlayerLevel.ADMIN ? "Set your level to Student"
+						.addHoverText(DYNServerMod.accessLevel == PlayerAccessLevel.ADMIN ? "Set your level to Student"
 								: "Set your level to Admin")
 						.setDoesDrawHoverText(true).setClickListener(but -> toggleLevel()));
 
@@ -334,7 +334,7 @@ public class Home extends Show {
 			text.clear();
 			text.add("Set your level to Admin");
 			selfLevelButton.setHoverText(text);
-			DYNServerMod.accessLevel = PlayerLevel.STUDENT;
+			DYNServerMod.accessLevel = PlayerAccessLevel.STUDENT;
 			NetworkManager.sendToServer(new ServerCommandMessage("/deop " + admin.getDisplayNameString()));
 			NetworkManager.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _OPS_"));
@@ -345,7 +345,7 @@ public class Home extends Show {
 			text.clear();
 			text.add("Set your level to Student");
 			selfLevelButton.setHoverText(text);
-			DYNServerMod.accessLevel = PlayerLevel.ADMIN;
+			DYNServerMod.accessLevel = PlayerAccessLevel.ADMIN;
 			NetworkManager.sendToServer(new ServerCommandMessage("/op " + admin.getDisplayNameString()));
 			NetworkManager.sendToServer(
 					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _OPS_"));

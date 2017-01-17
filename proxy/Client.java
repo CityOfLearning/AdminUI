@@ -9,7 +9,7 @@ import com.dyn.DYNServerMod;
 import com.dyn.admin.gui.Home;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
-import com.dyn.utils.PlayerLevel;
+import com.dyn.utils.PlayerAccessLevel;
 import com.rabbit.gui.RabbitGui;
 
 import net.minecraft.client.Minecraft;
@@ -33,7 +33,7 @@ public class Client implements Proxy {
 
 	@Override
 	public void init() {
-		if (DYNServerMod.accessLevel == PlayerLevel.ADMIN) {
+		if (DYNServerMod.accessLevel == PlayerAccessLevel.ADMIN) {
 
 			MinecraftForge.EVENT_BUS.register(this);
 
