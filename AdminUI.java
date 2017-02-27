@@ -9,6 +9,7 @@ import com.dyn.admin.proxy.Proxy;
 import com.dyn.admin.reference.MetaData;
 import com.dyn.admin.reference.Reference;
 import com.dyn.utils.BooleanListener;
+import com.dyn.utils.CCOLPlayerInfo;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class AdminUI {
 
 	public static List<String> adminSubRoster = new ArrayList<>();
+	public static ArrayList<CCOLPlayerInfo> programRoster = new ArrayList<>();
 	public static List<String> groups = new ArrayList<>();
 	public static BooleanListener groupsMessageRecieved = new BooleanListener(false);
 	public static Map<Integer, String> zones = new HashMap<>();

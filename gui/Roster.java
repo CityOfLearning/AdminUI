@@ -135,6 +135,12 @@ public class Roster extends Show {
 		registerComponent(
 				new Button((width / 2) - 10, (int) (height * .4), 20, 20, ">>").setClickListener(but -> addToRoster()));
 
+		// Buttons
+		registerComponent(new Button((width / 2) - 15, (int) (height * .25), 30, 20, "Org").setClickListener(but -> {
+			getStage().display(new Roster2());
+			onClose();
+		}));
+
 		registerComponent(new Button((width / 2) - 10, (int) (height * .6), 20, 20, "<<")
 				.setClickListener(but -> removeFromRoster()));
 
