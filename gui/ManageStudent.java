@@ -197,10 +197,10 @@ public class ManageStudent extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		for (String s : AdminUI.adminSubRoster) {
-			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-		}
+//		for (String s : AdminUI.adminSubRoster) {
+//			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
+//					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+//		}
 
 		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
 				rlist);
