@@ -7,6 +7,7 @@ import java.util.List;
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
 import com.dyn.admin.AdminUI;
+import com.dyn.admin.gui.helper.RosterHelper;
 import com.dyn.server.ServerMod;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
@@ -66,8 +67,10 @@ public class Home extends Show {
 				for (String student : AdminUI.adminSubRoster) {
 					rosterDisplayList.add(new StringEntry(student));
 				}
+				event.getDispatcher().setFlag(false);
 			}
 		};
+		DYNServerMod.serverUserlistReturned.setFlag(false);
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
 	}
 
@@ -167,7 +170,7 @@ public class Home extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		// View roster list
-		for (String student : AdminUI.adminSubRoster) {
+		for (String student : RosterHelper.getFormattedPlayerNames().values()) {
 			rlist.add(new StringEntry(student));
 		}
 
