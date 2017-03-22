@@ -2,8 +2,10 @@ package com.dyn.admin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.dyn.admin.proxy.Proxy;
 import com.dyn.admin.reference.MetaData;
@@ -20,7 +22,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "required-after:dyn|server")
 public class AdminUI {
 
-	public static List<String> adminSubRoster = new ArrayList<>();
+	public static Set<String> adminSubRoster = new HashSet<>();
 	public static ArrayList<CCOLPlayerInfo> programRoster = new ArrayList<>();
 	public static List<String> groups = new ArrayList<>();
 	public static BooleanListener groupsMessageRecieved = new BooleanListener(false);
