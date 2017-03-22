@@ -129,13 +129,18 @@ public class Scripts extends Show {
 				event.getDispatcher().setFlag(false);
 			}
 		};
+
+		DYNServerMod.studentScriptMessageRecieved.setFlag(false);
 		DYNServerMod.studentScriptMessageRecieved.addBooleanChangeListener(scriptlistener, this);
 
 		rosterlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				((Scripts) show).updateRoster();
+				event.getDispatcher().setFlag(false);
 			}
 		};
+
+		DYNServerMod.serverUserlistReturned.setFlag(false);
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
 

@@ -45,8 +45,10 @@ public class MonitorAchievements extends Show {
 				for (String student : DYNServerMod.usernames) {
 					userDisplayList.add(new SelectStringEntry(student));
 				}
+				event.getDispatcher().setFlag(false);
 			}
 		};
+		DYNServerMod.serverUserlistReturned.setFlag(false);
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
 	}
 
