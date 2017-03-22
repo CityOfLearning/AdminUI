@@ -100,8 +100,10 @@ public class Roster extends Show {
 		ArrayList<ListEntry> ulist = new ArrayList<>();
 
 		for (String s : userlist) {
-			ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			if (!s.isEmpty()) {
+				ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
+						int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			}
 		}
 
 		registerComponent(
@@ -164,6 +166,7 @@ public class Roster extends Show {
 			}
 		};
 
+		DYNServerMod.serverUserlistReturned.setFlag(false);
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
 
@@ -191,7 +194,7 @@ public class Roster extends Show {
 		userDisplayList.clear();
 		for (String s : DYNServerMod.usernames) {
 			if (!AdminUI.adminSubRoster.contains(s)
-					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString()) && !s.isEmpty()) {
 				userDisplayList.add(new SelectStringEntry(s));
 			}
 		}
