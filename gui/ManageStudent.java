@@ -3,11 +3,11 @@ package com.dyn.admin.gui;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.admin.AdminUI;
-import com.dyn.server.database.DBManager;
+import com.dyn.admin.gui.helper.RosterHelper;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
@@ -15,11 +15,11 @@ import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
 import com.dyn.server.network.packets.server.RequestUserStatusMessage;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.BooleanChangeListener;
-import com.google.gson.JsonObject;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBoxButton;
 import com.rabbit.gui.component.control.CheckBoxPictureButton;
+import com.rabbit.gui.component.control.DropDown;
 import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.PictureToggleButton;
 import com.rabbit.gui.component.control.TextBox;
@@ -28,21 +28,20 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.SelectListEntry;
-import com.rabbit.gui.component.list.entries.SelectStringEntry;
+import com.rabbit.gui.component.list.entries.SelectElementEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ResourceLocation;
 
 public class ManageStudent extends Show {
 
 	private EntityPlayerSP admin;
-	private SelectListEntry selectedEntry;
+	private SelectElementEntry<String> selectedEntry;
 	private ScrollableDisplayList userDisplayList;
-	private ArrayList<String> userlist = new ArrayList<>();
 
 	private boolean isFrozen;
 	private boolean isMuted;
@@ -56,8 +55,9 @@ public class ManageStudent extends Show {
 	private PictureToggleButton muteButton;
 	private CheckBoxPictureButton freezeButton;
 	private CheckBoxButton modeButton;
-	private TextLabel dynUsernameLabel;
-	private TextLabel dynPasswordLabel;
+	
+	private Scoreboard theScoreboard;
+	private DropDown teams;
 
 	public ManageStudent() {
 		setBackground(new DefaultBackground());
@@ -79,27 +79,28 @@ public class ManageStudent extends Show {
 				muteButton.setToggle(isMuted);
 				isStudentInCreative = DYNServerMod.playerStatus.get("mode").getAsBoolean();
 				modeButton.setToggle(isStudentInCreative);
+				event.getDispatcher().setFlag(false);
 			}
 		};
 
+		DYNServerMod.playerStatusReturned.setFlag(false);
 		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener, this);
 	}
 
-	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectElementEntry<String> entry, DisplayList list, int mouseX, int mouseY) {
 		selectedEntry = entry;
 		for (ListEntry listEntry : list.getContent()) {
 			if (!listEntry.equals(entry)) {
 				listEntry.setSelected(false);
 			}
 		}
-		NetworkManager.sendToServer(new RequestUserStatusMessage(selectedEntry.getTitle()));
-		usernameAndPassword();
+		NetworkManager.sendToServer(new RequestUserStatusMessage(entry.getValue()));
 	}
 
 	private void feedStudent() {
 		if (selectedEntry != null) {
-			if (!selectedEntry.getTitle().isEmpty()) {
-				NetworkManager.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle()));
+			if (!selectedEntry.getValue().isEmpty()) {
+				NetworkManager.sendToServer(new FeedPlayerMessage(selectedEntry.getValue()));
 			}
 		}
 	}
@@ -107,7 +108,7 @@ public class ManageStudent extends Show {
 	private void freezeUnfreezeStudent() {
 		if (selectedEntry != null) {
 			isFrozen = !isFrozen;
-			NetworkManager.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), isFrozen));
+			NetworkManager.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getValue(), isFrozen));
 			if (isFrozen) {
 				freezeText = "UnFreeze Student";
 				List<String> text = freezeButton.getHoverText();
@@ -126,8 +127,8 @@ public class ManageStudent extends Show {
 
 	private void healStudent() {
 		if (selectedEntry != null) {
-			if (!selectedEntry.getTitle().isEmpty()) {
-				admin.sendChatMessage("/heal " + selectedEntry.getTitle());
+			if (!selectedEntry.getValue().isEmpty()) {
+				admin.sendChatMessage("/heal " + selectedEntry.getValue());
 			}
 		}
 	}
@@ -135,9 +136,9 @@ public class ManageStudent extends Show {
 	private void muteUnmuteStudent() {
 		if (selectedEntry != null) {
 			if (!isMuted) {
-				admin.sendChatMessage("/mute " + selectedEntry.getTitle());
+				admin.sendChatMessage("/mute " + selectedEntry.getValue());
 			} else {
-				admin.sendChatMessage("/unmute " + selectedEntry.getTitle());
+				admin.sendChatMessage("/unmute " + selectedEntry.getValue());
 			}
 
 			isMuted = !isMuted;
@@ -170,37 +171,21 @@ public class ManageStudent extends Show {
 
 		SideButtons.init(this, 3);
 
-		for (String s : AdminUI.adminSubRoster) {
-			userlist.add(s);
-		}
-
+		theScoreboard = admin.worldObj.getScoreboard();
+		
 		registerComponent(
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage a Student", TextAlignment.CENTER));
 
-		// The students not on the Roster List for this class
-		ArrayList<ListEntry> ulist = new ArrayList<>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
-		for (String s : userlist) {
-			ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+		for (Entry<String, String> student : RosterHelper.getFormattedPlayerNames().entrySet()) {
+			rlist.add(new SelectElementEntry<>(student.getKey(), student.getValue(), (SelectElementEntry entry,
+					DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
 		registerComponent(new TextBox((int) (width * .23), (int) (height * .25), width / 4, 20, "Search for User")
 				.setId("rostersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-
-		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<>();
-
-		for (String s : AdminUI.adminSubRoster) {
-			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-		}
-
-//		for (String s : AdminUI.adminSubRoster) {
-//			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
-//					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-//		}
 
 		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
 				rlist);
@@ -213,13 +198,13 @@ public class ManageStudent extends Show {
 						.addHoverText("Refresh").setDoesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
-		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
+		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), width / 8, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
 		freezeButton.setIsEnabled(true).addHoverText(freezeText).setDoesDrawHoverText(true)
 				.setClickListener(but -> freezeUnfreezeStudent());
 		registerComponent(freezeButton);
 
-		muteButton = new PictureToggleButton((int) (width * .55), (int) (height * .365), 50, 25,
+		muteButton = new PictureToggleButton((int) (width * .55), (int) (height * .365), width / 8, 25,
 				DYNServerConstants.UNMUTE_IMAGE, DYNServerConstants.MUTE_IMAGE, false);
 		muteButton.setIsEnabled(true).addHoverText(muteText).setDoesDrawHoverText(true)
 				.setClickListener(but -> muteUnmuteStudent());
@@ -232,11 +217,11 @@ public class ManageStudent extends Show {
 		registerComponent(modeButton);
 
 		registerComponent(
-				new PictureButton((int) (width * .7), (int) (height * .25), 50, 25, DYNServerConstants.HEART_IMAGE)
+				new PictureButton((int) (width * .7), (int) (height * .25), width / 8, 25, DYNServerConstants.HEART_IMAGE)
 						.setIsEnabled(true).addHoverText("Heal Students").setDoesDrawHoverText(true)
 						.setClickListener(but -> healStudent()));
 
-		registerComponent(new PictureButton((int) (width * .7), (int) (height * .365), 50, 25,
+		registerComponent(new PictureButton((int) (width * .7), (int) (height * .365), width / 8, 25,
 				new ResourceLocation("minecraft", "textures/items/chicken_cooked.png")).setIsEnabled(true)
 						.addHoverText("Feed Students").setDoesDrawHoverText(true)
 						.setClickListener(but -> feedStudent()));
@@ -253,18 +238,20 @@ public class ManageStudent extends Show {
 				new Button((int) (width * .55), (int) (height * .8), (int) (width / 3.3), 20, "Remove Effects")
 						.addHoverText("Removes effects like poison and invisibility").setDoesDrawHoverText(true)
 						.setClickListener(but -> {
-							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-								NetworkManager.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
+							if ((selectedEntry != null) && !selectedEntry.getValue().isEmpty()) {
+								NetworkManager.sendToServer(new RemoveEffectsMessage(selectedEntry.getValue()));
 							}
 						}));
 
-		dynUsernameLabel = new TextLabel((int) (width * .15), (int) (height * .8), (int) (width / 2.5), 20, Color.black,
-				"Username: " + dynUsername);
-		dynPasswordLabel = new TextLabel((int) (width * .15), (int) (height * .85), (int) (width / 2.5), 20,
-				Color.black, "Password: " + dynPassword);
-		registerComponent(dynUsernameLabel);
-		registerComponent(dynPasswordLabel);
+		registerComponent(teams = new DropDown((int) (width * .15), (int) (height * .8), (int) (width / 5), 20).addAll(theScoreboard.getTeamNames()));
+		registerComponent(new Button((int) (width * .365), (int) (height * .8), (int) (width / 6), 20, "Set Team").setClickListener(btn -> {
+			if(selectedEntry != null && teams.getSelectedIdentifier() != null){
+				admin.sendChatMessage("/scoreboard teams leave " + selectedEntry.getValue());
+				admin.sendChatMessage("/scoreboard teams leave " + selectedEntry.getValue() + " " + teams.getSelectedElement());
+			}
+		}));
 
+		
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				DYNServerConstants.BG1_IMAGE));
@@ -272,7 +259,7 @@ public class ManageStudent extends Show {
 
 	private void switchMode() {
 		if (selectedEntry != null) {
-			admin.sendChatMessage("/gamemode " + (isStudentInCreative ? "0 " : "1 ") + selectedEntry.getTitle());
+			admin.sendChatMessage("/gamemode " + (isStudentInCreative ? "0 " : "1 ") + selectedEntry.getValue());
 			isStudentInCreative = !isStudentInCreative;
 			if (isStudentInCreative) {
 				modeText = "Survival Mode";
@@ -292,16 +279,16 @@ public class ManageStudent extends Show {
 
 	private void teleportStudentTo() {
 		if (selectedEntry != null) {
-			if (!selectedEntry.getTitle().isEmpty()) {
-				admin.sendChatMessage("/tp " + selectedEntry.getTitle() + " " + admin.getDisplayNameString());
+			if (!selectedEntry.getValue().isEmpty()) {
+				admin.sendChatMessage("/tp " + selectedEntry.getValue() + " " + admin.getDisplayNameString());
 			}
 		}
 	}
 
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
-			if (!selectedEntry.getTitle().isEmpty()) {
-				admin.sendChatMessage("/tp " + admin.getDisplayNameString() + " " + selectedEntry.getTitle());
+			if (!selectedEntry.getValue().isEmpty()) {
+				admin.sendChatMessage("/tp " + admin.getDisplayNameString() + " " + selectedEntry.getValue());
 			}
 		}
 	}
@@ -309,30 +296,13 @@ public class ManageStudent extends Show {
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "rostersearch") {
 			userDisplayList.clear();
-			for (String student : AdminUI.adminSubRoster) {
-				if (student.contains(textbox.getText())) {
-					userDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			for (Entry<String, String> student : RosterHelper.getFormattedPlayerNames().entrySet()) {
+				if (student.getKey().contains(textbox.getText())) {
+					userDisplayList.add(new SelectElementEntry<>(student.getKey(), student.getValue(),
+							(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
+									dlist, mouseX, mouseY)));
 				}
 			}
-		}
-	}
-
-	private void usernameAndPassword() {
-		if (selectedEntry != null) {
-			for (String student : AdminUI.adminSubRoster) {
-				if (student.equals(selectedEntry.getTitle())) {
-
-					JsonObject info = DBManager.getInfoFromUserAccount(DBManager.getUserIDFromMCUsername(student));
-					if ((info != null) && info.has("username") && info.has("password")) {
-						dynUsername = info.get("username").getAsString();
-						dynPassword = info.get("password").getAsString();
-					}
-				}
-			}
-		} else {
-			dynUsername = "";
-			dynPassword = "";
 		}
 	}
 }
