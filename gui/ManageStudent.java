@@ -50,8 +50,6 @@ public class ManageStudent extends Show {
 	private String muteText;
 	private String freezeText;
 	private String modeText;
-	private String dynUsername;
-	private String dynPassword;
 	private PictureToggleButton muteButton;
 	private CheckBoxPictureButton freezeButton;
 	private CheckBoxButton modeButton;
@@ -68,8 +66,6 @@ public class ManageStudent extends Show {
 		isFrozen = false;
 		isMuted = false;
 		isStudentInCreative = false;
-		dynUsername = "";
-		dynPassword = "";
 
 		BooleanChangeListener listener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
@@ -247,7 +243,7 @@ public class ManageStudent extends Show {
 		registerComponent(new Button((int) (width * .365), (int) (height * .8), (int) (width / 6), 20, "Set Team").setClickListener(btn -> {
 			if(selectedEntry != null && teams.getSelectedIdentifier() != null){
 				admin.sendChatMessage("/scoreboard teams leave " + selectedEntry.getValue());
-				admin.sendChatMessage("/scoreboard teams leave " + selectedEntry.getValue() + " " + teams.getSelectedElement());
+				admin.sendChatMessage("/scoreboard teams join " + teams.getSelectedElement() + " " + selectedEntry.getValue());
 			}
 		}));
 
