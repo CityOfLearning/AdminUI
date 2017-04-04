@@ -87,8 +87,7 @@ public class Roster extends Show {
 		SideButtons.init(this, 2);
 
 		for (String s : DYNServerMod.usernames) {
-			if (!AdminUI.adminSubRoster.contains(s)
-					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+			if (!AdminUI.adminSubRoster.contains(s) && !s.equals(Minecraft.getMinecraft().thePlayer.getName())) {
 				userlist.add(s);
 			}
 		}
@@ -193,8 +192,8 @@ public class Roster extends Show {
 	public void updateRoster() {
 		userDisplayList.clear();
 		for (String s : DYNServerMod.usernames) {
-			if (!AdminUI.adminSubRoster.contains(s)
-					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString()) && !s.isEmpty()) {
+			if (!AdminUI.adminSubRoster.contains(s) && !s.equals(Minecraft.getMinecraft().thePlayer.getName())
+					&& !s.isEmpty()) {
 				userDisplayList.add(new SelectStringEntry(s));
 			}
 		}

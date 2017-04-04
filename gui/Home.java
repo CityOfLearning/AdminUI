@@ -307,7 +307,7 @@ public class Home extends Show {
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : AdminUI.adminSubRoster) {
 			ServerMod.proxy.addScheduledTask(() -> {
-				admin.sendChatMessage("/tp " + student + " " + admin.getDisplayNameString());
+				admin.sendChatMessage("/tp " + student + " " + admin.getName());
 			});
 		}
 
@@ -338,22 +338,20 @@ public class Home extends Show {
 			text.add("Set your level to Admin");
 			selfLevelButton.setHoverText(text);
 			DYNServerMod.accessLevel = PlayerAccessLevel.STUDENT;
-			NetworkManager.sendToServer(new ServerCommandMessage("/deop " + admin.getDisplayNameString()));
-			NetworkManager.sendToServer(
-					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _OPS_"));
-			NetworkManager.sendToServer(
-					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _STUDENTS_"));
+			NetworkManager.sendToServer(new ServerCommandMessage("/deop " + admin.getName()));
+			NetworkManager.sendToServer(new ServerCommandMessage("/p user " + admin.getName() + " group remove _OPS_"));
+			NetworkManager
+					.sendToServer(new ServerCommandMessage("/p user " + admin.getName() + " group add _STUDENTS_"));
 		} else {
 			List<String> text = selfLevelButton.getHoverText();
 			text.clear();
 			text.add("Set your level to Student");
 			selfLevelButton.setHoverText(text);
 			DYNServerMod.accessLevel = PlayerAccessLevel.ADMIN;
-			NetworkManager.sendToServer(new ServerCommandMessage("/op " + admin.getDisplayNameString()));
-			NetworkManager.sendToServer(
-					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group add _OPS_"));
-			NetworkManager.sendToServer(
-					new ServerCommandMessage("/p user " + admin.getDisplayNameString() + " group remove _STUDENTS_"));
+			NetworkManager.sendToServer(new ServerCommandMessage("/op " + admin.getName()));
+			NetworkManager.sendToServer(new ServerCommandMessage("/p user " + admin.getName() + " group add _OPS_"));
+			NetworkManager
+					.sendToServer(new ServerCommandMessage("/p user " + admin.getName() + " group remove _STUDENTS_"));
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package com.dyn.admin.gui;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -53,7 +52,7 @@ public class ManageStudent extends Show {
 	private PictureToggleButton muteButton;
 	private CheckBoxPictureButton freezeButton;
 	private CheckBoxButton modeButton;
-	
+
 	private Scoreboard theScoreboard;
 	private DropDown teams;
 
@@ -168,7 +167,7 @@ public class ManageStudent extends Show {
 		SideButtons.init(this, 3);
 
 		theScoreboard = admin.worldObj.getScoreboard();
-		
+
 		registerComponent(
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage a Student", TextAlignment.CENTER));
 
@@ -212,10 +211,9 @@ public class ManageStudent extends Show {
 				.setClickListener(but -> switchMode());
 		registerComponent(modeButton);
 
-		registerComponent(
-				new PictureButton((int) (width * .7), (int) (height * .25), width / 8, 25, DYNServerConstants.HEART_IMAGE)
-						.setIsEnabled(true).addHoverText("Heal Students").setDoesDrawHoverText(true)
-						.setClickListener(but -> healStudent()));
+		registerComponent(new PictureButton((int) (width * .7), (int) (height * .25), width / 8, 25,
+				DYNServerConstants.HEART_IMAGE).setIsEnabled(true).addHoverText("Heal Students")
+						.setDoesDrawHoverText(true).setClickListener(but -> healStudent()));
 
 		registerComponent(new PictureButton((int) (width * .7), (int) (height * .365), width / 8, 25,
 				new ResourceLocation("minecraft", "textures/items/chicken_cooked.png")).setIsEnabled(true)
@@ -239,15 +237,18 @@ public class ManageStudent extends Show {
 							}
 						}));
 
-		registerComponent(teams = new DropDown((int) (width * .15), (int) (height * .8), (int) (width / 5), 20).addAll(theScoreboard.getTeamNames()));
-		registerComponent(new Button((int) (width * .365), (int) (height * .8), (int) (width / 6), 20, "Set Team").setClickListener(btn -> {
-			if(selectedEntry != null && teams.getSelectedIdentifier() != null){
-				admin.sendChatMessage("/scoreboard teams leave " + selectedEntry.getValue());
-				admin.sendChatMessage("/scoreboard teams join " + teams.getSelectedElement() + " " + selectedEntry.getValue());
-			}
-		}));
+		registerComponent(teams = new DropDown((int) (width * .15), (int) (height * .8), width / 5, 20)
+				.addAll(theScoreboard.getTeamNames()));
 
-		
+		registerComponent(new Button((int) (width * .365), (int) (height * .8), width / 6, 20, "Set Team")
+				.setClickListener(btn -> {
+					if ((selectedEntry != null) && (teams.getSelectedIdentifier() != null)) {
+						admin.sendChatMessage("/scoreboard teams leave " + selectedEntry.getValue());
+						admin.sendChatMessage("/scoreboard teams join " + teams.getSelectedElement().getValue() + " "
+								+ selectedEntry.getValue());
+					}
+				}));
+
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				DYNServerConstants.BG1_IMAGE));
@@ -276,7 +277,7 @@ public class ManageStudent extends Show {
 	private void teleportStudentTo() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getValue().isEmpty()) {
-				admin.sendChatMessage("/tp " + selectedEntry.getValue() + " " + admin.getDisplayNameString());
+				admin.sendChatMessage("/tp " + selectedEntry.getValue() + " " + admin.getName());
 			}
 		}
 	}
@@ -284,7 +285,7 @@ public class ManageStudent extends Show {
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getValue().isEmpty()) {
-				admin.sendChatMessage("/tp " + admin.getDisplayNameString() + " " + selectedEntry.getValue());
+				admin.sendChatMessage("/tp " + admin.getName() + " " + selectedEntry.getValue());
 			}
 		}
 	}
