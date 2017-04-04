@@ -206,8 +206,10 @@ public class MonitorAchievements extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (String s : DYNServerMod.usernames) {
-			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			if (!s.isEmpty()) {
+				rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
+						int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			}
 		}
 
 		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .3), width / 3, 50, 15, rlist);
